@@ -1,0 +1,69 @@
+plugins {
+    id "java"
+    id "java-library"
+    id "maven-publish"
+    id "java-gradle-plugin"
+}
+
+repositories {
+    mavenLocal()
+    jcenter()
+    maven {
+        url "https://repo.conduit.systems/repository/releases/"
+    }
+}
+
+dependencies {
+    implementation "org.projectlombok:lombok:1.18.10"
+    annotationProcessor "org.projectlombok:lombok:1.18.10"
+    implementation "com.google.code.gson:gson:2.8.0"
+    compileOnly "org.apache.logging.log4j:log4j-api:2.8.1"
+    compileOnly "net.md-5:SpecialSource:1.8.6"
+    compileOnly "cpw.mods:modlauncher:4.2.0"
+    compileOnly "org.spongepowered:mixin:0.8"
+}
+
+group = theGroup
+version = theVersion
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+task install(dependsOn: [publishToMavenLocal])
+
+jar {
+    manifest {
+        attributes(
+                "Main-Class" : "systems.conduit.stream.launcher.LauncherStart",
+                "Launcher-Agent-Class" : "systems.conduit.stream.launcher.Agent"
+        )
+    }
+}
+
+gradlePlugin {
+    plugins {
+        stream {
+            id = "Stream"
+            implementationClass = "systems.conduit.stream.gradle.StreamGradlePlugin"
+        }
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            credentials {
+                username System.getProperty("MAVEN_USER")?:'ci'
+                password System.getProperty("MAVEN_PASSWORD")?:'password'
+            }
+            url "https://repo.conduit.systems/repository/releases/"
+        }
+    }
+}

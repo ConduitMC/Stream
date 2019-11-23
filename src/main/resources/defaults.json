@@ -1,0 +1,80 @@
+{
+  "libs": [
+    {
+      "type": "maven",
+      "groupId": "org.ow2.asm",
+      "artifactId": "asm",
+      "version": "7.2"
+    },
+    {
+      "type": "maven",
+      "groupId": "org.ow2.asm",
+      "artifactId": "asm-analysis",
+      "version": "7.2"
+    },
+    {
+      "type": "maven",
+      "groupId": "org.ow2.asm",
+      "artifactId": "asm-commons",
+      "version": "7.2"
+    },
+    {
+      "type": "maven",
+      "groupId": "org.ow2.asm",
+      "artifactId": "asm-tree",
+      "version": "7.2"
+    },
+    {
+      "type": "maven",
+      "groupId": "org.ow2.asm",
+      "artifactId": "asm-util",
+      "version": "7.2"
+    },
+    {
+      "type": "maven",
+      "groupId": "commons-io",
+      "artifactId": "commons-io",
+      "version": "2.5"
+    },
+    {
+      "type": "maven",
+      "groupId": "com.google.guava",
+      "artifactId": "guava",
+      "version": "21.0"
+    },
+    {
+      "type": "maven",
+      "groupId": "net.sf.jopt-simple",
+      "artifactId": "jopt-simple",
+      "version": "5.0.3"
+    },
+    {
+      "type": "maven",
+      "groupId": "net.md-5",
+      "artifactId": "SpecialSource",
+      "version": "1.8.6",
+      "url": "https://repo.conduit.systems/repository/releases/"
+    },
+    {
+      "type": "maven",
+      "groupId": "cpw.mods",
+      "artifactId": "grossjava9hacks",
+      "version": "1.1.0",
+      "url": "https://files.minecraftforge.net/maven/"
+    },
+    {
+      "type": "maven",
+      "groupId": "cpw.mods",
+      "artifactId": "modlauncher",
+      "version": "4.2.0",
+      "url": "https://repo.conduit.systems/repository/releases/"
+    },
+    {
+      "type": "maven",
+      "groupId": "org.spongepowered",
+      "artifactId": "mixin",
+      "version": "0.8",
+      "url": "https://repo.conduit.systems/repository/releases/"
+    }
+  ]
+}
