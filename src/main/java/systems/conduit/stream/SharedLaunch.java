@@ -31,6 +31,7 @@ public class SharedLaunch {
     public static List<URL> specialSourcePaths = new ArrayList<>();
 
     public static void start(Path basePath, Object projectObject) {
+        LibraryProcessor.resetArtifacts();
         // Load logger libraries
         LibraryProcessor.downloadLibrary("logger libraries", true, basePath, projectObject, Arrays.asList(
                 new JsonLibraryInfo("maven", "org.apache.logging.log4j", "log4j-api", "2.8.1", ""),

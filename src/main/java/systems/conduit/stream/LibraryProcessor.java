@@ -16,6 +16,10 @@ public class LibraryProcessor {
 
     private static ArrayList<String> loadedArtifacts = new ArrayList<>();
 
+    public static void resetArtifacts() {
+        loadedArtifacts = new ArrayList<>();
+    }
+
     public static void downloadLibrary(String type, boolean firstLaunch, Path basePath, Object projectObject, List<JsonLibraryInfo> libraries) {
         info(firstLaunch || basePath != null, "Loading " + type);
         List<String> loadedLibraries = new ArrayList<>();
