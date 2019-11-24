@@ -15,6 +15,7 @@ import systems.conduit.stream.launcher.LauncherStart;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
@@ -262,7 +263,11 @@ public class SharedLaunch {
     }
 
     public static void downloadFile(URL url, File location) throws IOException {
-        try (InputStream inputStream = url.openStream()) {
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.addRequestProperty("User-Agent", Constants.USER_AGENT);
+        connection.setRequestMethod("GET");
+        connection.connect();
+        try (InputStream inputStream = connection.getInputStream()) {
             Files.copy(inputStream, location.toPath(), StandardCopyOption.REPLACE_EXISTING);
         }
     }

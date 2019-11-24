@@ -38,7 +38,7 @@ public class Constants {
     public static final String GRADLE_CONFIGURATION_ANNOTATION = "annotationProcessor";
     public static final String GRADLE_CONFIGURATION_API = "api";
 
-    public static final String USER_AGENT = "Mozilla/5.0";
+    public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11";
 
     public static void setMinecraftJsonPath(Path basePath) {
         if (basePath != null) MINECRAFT_JSON_PATH = basePath.resolve(MINECRAFT_JSON_PATH);
