@@ -39,6 +39,8 @@ public class StreamGradlePlugin implements Plugin<Project> {
     public void setDefaults(Project project) {
         // Set encoding to utf-8
         System.setProperty("file.encoding", "utf-8");
+        // Set our user agent
+        System.setProperty("http.agent", Constants.USER_AGENT);
         // Default plugins
         project.apply(Collections.singletonMap("plugin", "java"));
         project.apply(Collections.singletonMap("plugin", "java-library"));
