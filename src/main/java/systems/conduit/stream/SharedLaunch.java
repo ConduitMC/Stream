@@ -2,7 +2,6 @@ package systems.conduit.stream;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import org.apache.log4j.LogManager;
 import systems.conduit.stream.gradle.SpecialSourceClassLoader;
 import systems.conduit.stream.json.download.JsonLibraries;
 import systems.conduit.stream.json.download.JsonLibraryInfo;
@@ -11,7 +10,7 @@ import systems.conduit.stream.json.minecraft.MinecraftLibrary;
 import systems.conduit.stream.json.minecraft.MinecraftVersion;
 import systems.conduit.stream.json.minecraft.manifest.MinecraftVersionManifest;
 import systems.conduit.stream.json.minecraft.manifest.MinecraftVersionManifestType;
-import systems.conduit.stream.launcher.Agent;
+import systems.conduit.stream.launcher.LauncherStart;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
@@ -47,7 +46,7 @@ public class SharedLaunch {
             Gson gson = new GsonBuilder().create();
             defaults = gson.fromJson(reader, JsonLibraries.class);
         } catch (IOException e) {
-            fatal(basePath, "Error reading default libraries json");
+            Logger.fatal(basePath != null, "Error reading default libraries json");
             e.printStackTrace();
             System.exit(0);
         }
@@ -59,7 +58,7 @@ public class SharedLaunch {
             try (InputStream inputStream = SharedLaunch.class.getResourceAsStream("/" + Constants.MINECRAFT_JSON)) {
                 Files.copy(inputStream, Constants.MINECRAFT_JSON_PATH, StandardCopyOption.REPLACE_EXISTING);
             } catch (IOException e) {
-                fatal(basePath, "Error copying Minecraft json");
+                Logger.fatal(basePath != null, "Error copying Minecraft json");
                 e.printStackTrace();
                 System.exit(0);
             }
@@ -70,7 +69,7 @@ public class SharedLaunch {
             Gson gson = new GsonBuilder().create();
             minecraft = gson.fromJson(reader, JsonMinecraft.class);
         } catch (IOException e) {
-            fatal(basePath, "Error reading Minecraft libraries json");
+            Logger.fatal(basePath != null, "Error reading Minecraft libraries json");
             e.printStackTrace();
             System.exit(0);
         }
@@ -78,7 +77,7 @@ public class SharedLaunch {
         Constants.setPaths(basePath, minecraft.getVersion());
         // Make sure we have the correct directories
         if (!Constants.MINECRAFT_PATH.toFile().exists() && !Constants.MINECRAFT_PATH.toFile().mkdirs()) {
-            fatal(basePath, "Failed to make minecraft directory");
+            Logger.fatal(basePath != null, "Failed to make minecraft directory");
             System.exit(0);
         }
         if (!Constants.VERSION_JSON_PATH.toFile().exists()) {
@@ -89,19 +88,19 @@ public class SharedLaunch {
                 // Read version json and get server info
                 if (versionInfo.isPresent() && versionInfo.get().getUrl() != null && !versionInfo.get().getUrl().isEmpty()) {
                     try {
-                        info(basePath, "Downloading version json");
+                        Logger.info(basePath != null, "Downloading version json");
                         downloadFile(new URL(versionInfo.get().getUrl()), Constants.VERSION_JSON_PATH.toFile());
                     } catch (IOException e) {
-                        fatal(basePath, "Error creating version json url");
+                        Logger.fatal(basePath != null, "Error creating version json url");
                         e.printStackTrace();
                         System.exit(0);
                     }
                 } else {
-                    fatal(basePath, "Unable to get version info for Minecraft (" + Constants.MINECRAFT_VERSION + ")");
+                    Logger.fatal(basePath != null, "Unable to get version info for Minecraft (" + Constants.MINECRAFT_VERSION + ")");
                     System.exit(0);
                 }
             } catch (IOException e) {
-                fatal(basePath, "Error reading Minecraft manifest url");
+                Logger.fatal(basePath != null, "Error reading Minecraft manifest url");
                 e.printStackTrace();
                 System.exit(0);
             }
@@ -112,12 +111,12 @@ public class SharedLaunch {
             Gson gson = new GsonBuilder().create();
             minecraftVersion = gson.fromJson(reader, MinecraftVersion.class);
         } catch (IOException e) {
-            fatal(basePath, "Error reading Minecraft version json");
+            Logger.fatal(basePath != null, "Error reading Minecraft version json");
             e.printStackTrace();
             System.exit(0);
         }
         if (minecraftVersion == null) {
-            fatal(basePath, "Error finding Minecraft version json");
+            Logger.fatal(basePath != null, "Error finding Minecraft version json");
             System.exit(0);
         }
         // Download libraries
@@ -136,49 +135,49 @@ public class SharedLaunch {
             // Download server
             if (!minecraftVersion.getDownloads().getServer().getUrl().isEmpty()) {
                 try {
-                    info(basePath, "Downloading Minecraft server (" + Constants.MINECRAFT_VERSION + ")");
+                    Logger.info(basePath != null, "Downloading Minecraft server (" + Constants.MINECRAFT_VERSION + ")");
                     downloadFile(new URL(minecraftVersion.getDownloads().getServer().getUrl()), Constants.SERVER_JAR_PATH.toFile());
                 } catch (IOException e) {
-                    fatal(basePath, "Error creating server url");
+                    Logger.fatal(basePath != null, "Error creating server url");
                     e.printStackTrace();
                     System.exit(0);
                 }
             } else {
-                fatal(basePath, "Error reading Minecraft server url");
+                Logger.fatal(basePath != null, "Error reading Minecraft server url");
                 System.exit(0);
             }
             // Cleanup Minecraft
-            info(basePath, "Cleaning up Minecraft");
+            Logger.info(basePath != null, "Cleaning up Minecraft");
             deleteMinecraftTrash(Constants.SERVER_JAR_PATH.toFile());
-            info(basePath, "Cleaned up Minecraft");
+            Logger.info(basePath != null, "Cleaned up Minecraft");
             // Download server mappings
             if (!minecraftVersion.getDownloads().getServerMappings().getUrl().isEmpty()) {
                 try {
-                    info(basePath, "Downloading server mappings");
+                    Logger.info(basePath != null, "Downloading server mappings");
                     downloadFile(new URL(minecraftVersion.getDownloads().getServerMappings().getUrl()), Constants.SERVER_MAPPINGS_PATH.toFile());
                 } catch (IOException e) {
-                    fatal(basePath, "Error creating server mappings url");
+                    Logger.fatal(basePath != null, "Error creating server mappings url");
                     e.printStackTrace();
                     System.exit(0);
                 }
             } else {
-                fatal(basePath, "Error reading Minecraft server mappings url");
+                Logger.fatal(basePath != null, "Error reading Minecraft server mappings url");
                 System.exit(0);
             }
             // Convert Minecraft mappings
-            info(basePath, "Converting Minecraft mappings");
+            Logger.info(basePath != null, "Converting Minecraft mappings");
             Mojang2Tsrg m2t = new Mojang2Tsrg();
             try {
                 m2t.loadClasses(Constants.SERVER_MAPPINGS_PATH.toFile());
                 m2t.writeTsrg(Constants.SERVER_MAPPINGS_PATH.toFile(), Constants.SERVER_MAPPINGS_CONVERTED_PATH.toFile());
             } catch (IOException e) {
-                fatal(basePath, "Error converting Minecraft server mappings");
+                Logger.fatal(basePath != null, "Error converting Minecraft server mappings");
                 e.printStackTrace();
                 System.exit(0);
             }
             Constants.SERVER_MAPPINGS_PATH.toFile().delete();
             // Remapping Minecraft
-            info(basePath, "Remapping Minecraft (This might take a bit)");
+            Logger.info(basePath != null, "Remapping Minecraft (This might take a bit)");
             ClassLoader classLoader = ClassLoader.getSystemClassLoader();
             if (basePath != null) {
                 classLoader = new SpecialSourceClassLoader(specialSourcePaths.toArray(new URL[]{}), classLoader);
@@ -195,19 +194,19 @@ public class SharedLaunch {
                 Method method = cls.getMethod("main", String[].class);
                 method.invoke(null, (Object) specialSourceArgs);
             } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | ClassNotFoundException e) {
-                fatal(null, "Error remapping Minecraft");
+                Logger.fatal(basePath != null, "Error remapping Minecraft");
                 e.printStackTrace();
                 System.exit(0);
             }
             Constants.SERVER_JAR_PATH.toFile().delete();
             Constants.SERVER_MAPPINGS_CONVERTED_PATH.toFile().delete();
-            info(basePath, "Remapped Minecraft");
+            Logger.info(basePath != null, "Remapped Minecraft");
         }
         // Load Minecraft
         if (basePath == null) {
-            info(null, "Loading Minecraft remapped");
-            Agent.addClassPath(Constants.SERVER_MAPPED_JAR_PATH.toFile());
-            info(null, "Loaded Minecraft remapped");
+            Logger.info(false, "Loading Minecraft remapped");
+            LauncherStart.PATHS.add(Constants.SERVER_MAPPED_JAR_PATH);
+            Logger.info(false, "Loaded Minecraft remapped");
         } else {
             try {
                 if (projectObject != null) {
@@ -216,26 +215,10 @@ public class SharedLaunch {
                     project.getDependencies().add(Constants.GRADLE_CONFIGURATION_API, dependency);
                 }
             } catch (MalformedURLException e) {
-                fatal(basePath, "Error adding Minecraft server");
+                Logger.fatal(true, "Error adding Minecraft server");
                 e.printStackTrace();
                 System.exit(0);
             }
-        }
-    }
-
-    private static void info(Path basePath, String message) {
-        if (basePath == null) {
-            LogManager.getLogger(Constants.LOGGER_NAME).info(message);
-        } else {
-            System.out.println(message);
-        }
-    }
-
-    private static void fatal(Path basePath, String message) {
-        if (basePath == null) {
-            LogManager.getLogger(Constants.LOGGER_NAME).fatal(message);
-        } else {
-            System.out.println(message);
         }
     }
 

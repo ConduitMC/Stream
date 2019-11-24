@@ -1,6 +1,5 @@
 package systems.conduit.stream;
 
-import org.apache.logging.log4j.LogManager;
 import systems.conduit.stream.json.download.JsonLibraryInfo;
 import systems.conduit.stream.launcher.Agent;
 
@@ -21,7 +20,7 @@ public class LibraryProcessor {
     }
 
     public static void downloadLibrary(String type, boolean firstLaunch, Path basePath, Object projectObject, List<JsonLibraryInfo> libraries) {
-        info(firstLaunch || basePath != null, "Loading " + type);
+        Logger.info(firstLaunch || basePath != null, "Loading " + type);
         List<String> loadedLibraries = new ArrayList<>();
         for (JsonLibraryInfo library : libraries) {
             if (loadedArtifacts.contains(library.getGroupId() + ":" + library.getArtifactId())) continue;
@@ -35,7 +34,7 @@ public class LibraryProcessor {
                 Files.createDirectories(libraryPath.toPath());
                 File jar = new File(libraryPath, getFileName(library));
                 if (!jar.exists() && library.getType() != null) {
-                    info(firstLaunch || basePath != null, "Downloading " + type + ": " + library.getArtifactId());
+                    Logger.info(firstLaunch || basePath != null, "Downloading " + type + ": " + library.getArtifactId());
                     if (library.getType().trim().equalsIgnoreCase("maven")) {
                         SharedLaunch.downloadFile(getUrl(library), jar);
                     } else if (!library.getType().trim().equalsIgnoreCase("minecraft")) {
@@ -52,13 +51,13 @@ public class LibraryProcessor {
                     project.getDependencies().add(Constants.GRADLE_CONFIGURATION_API, dependency);
                 }
             } catch (Exception e) {
-                error(firstLaunch || basePath != null, "Error loading " + type + ": " + library.getArtifactId());
+                Logger.fatal(firstLaunch || basePath != null, "Error loading " + type + ": " + library.getArtifactId());
                 e.printStackTrace();
                 System.exit(0);
             }
 
         }
-        if (!loadedLibraries.isEmpty()) info(firstLaunch || basePath != null, "Loaded " + type + ": " + loadedLibraries);
+        if (!loadedLibraries.isEmpty()) Logger.info(firstLaunch || basePath != null, "Loaded " + type + ": " + loadedLibraries);
     }
 
     private static URL getUrl(JsonLibraryInfo library) throws MalformedURLException {
@@ -74,22 +73,4 @@ public class LibraryProcessor {
     private static String getPath(JsonLibraryInfo library) {
         return library.getGroupId().replaceAll("\\.", "/") + "/" + library.getArtifactId() + "/" + library.getVersion() + "/";
     }
-
-    private static void info(boolean firstLaunch, String message) {
-        if (firstLaunch) {
-            System.out.println(message);
-        } else {
-            System.out.println("Hello 1");
-            LogManager.getLogger(Constants.LOGGER_NAME).info(message);
-        }
-    }
-
-    private static void error(boolean firstLaunch, String message) {
-        if (firstLaunch) {
-            System.out.println(message);
-        } else {
-            LogManager.getLogger(Constants.LOGGER_NAME).fatal(message);
-        }
-    }
 }
-
