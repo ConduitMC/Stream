@@ -5,9 +5,10 @@ import com.google.gson.GsonBuilder;
 import cpw.mods.modlauncher.Launcher;
 import systems.conduit.stream.*;
 import systems.conduit.stream.json.download.JsonLibraries;
-import systems.conduit.stream.json.minecraft.JsonMinecraft;
+import systems.conduit.stream.json.JsonStream;
 
 import java.io.*;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -34,28 +35,28 @@ public class LauncherStart {
         SharedLaunch.downloadRequiredLibraries(null, registerJar);
         // Download default libraries
         SharedLaunch.downloadDefaultLibraries(null, registerJar);
-        // Add Minecraft json if does not exist
-        if (!Constants.MINECRAFT_JSON_PATH.toFile().exists()) {
-            try (InputStream inputStream = SharedLaunch.class.getResourceAsStream("/" + Constants.MINECRAFT_JSON)) {
-                Files.copy(inputStream, Constants.MINECRAFT_JSON_PATH, StandardCopyOption.REPLACE_EXISTING);
+        // Add Stream json if does not exist
+        if (!Constants.STREAM_JSON_PATH.toFile().exists()) {
+            try (InputStream inputStream = SharedLaunch.class.getResourceAsStream("/" + Constants.STREAM_JSON)) {
+                Files.copy(inputStream, Constants.STREAM_JSON_PATH, StandardCopyOption.REPLACE_EXISTING);
             } catch (IOException e) {
-                Logger.fatal("Error copying Minecraft json");
+                Logger.fatal("Error copying Stream json");
                 e.printStackTrace();
                 System.exit(0);
             }
         }
-        // Load Minecraft from json to class
-        JsonMinecraft minecraft = new JsonMinecraft();
-        try (BufferedReader reader = new BufferedReader(new FileReader(Constants.MINECRAFT_JSON_PATH.toFile()))) {
+        // Load Stream from json to class
+        JsonStream stream = new JsonStream();
+        try (BufferedReader reader = new BufferedReader(new FileReader(Constants.STREAM_JSON_PATH.toFile()))) {
             Gson gson = new GsonBuilder().create();
-            minecraft = gson.fromJson(reader, JsonMinecraft.class);
+            stream = gson.fromJson(reader, JsonStream.class);
         } catch (IOException e) {
-            Logger.fatal("Error reading Minecraft libraries json");
+            Logger.fatal("Error reading Stream json");
             e.printStackTrace();
             System.exit(0);
         }
         // Download/load minecraft libraries and download and remap minecraft if need to
-        SharedLaunch.setupMinecraft(null, minecraft.getVersion(), registerJar);
+        SharedLaunch.setupMinecraft(null, stream.getMinecraft().getVersion(), registerJar);
         // Load minecraft
         Logger.info("Loading Minecraft remapped");
         LauncherStart.PATHS.add(Constants.SERVER_MAPPED_JAR_PATH);
@@ -65,7 +66,20 @@ public class LauncherStart {
             Logger.fatal("Failed to make mixins directory");
             System.exit(0);
         }
-        // TODO: Download Conduit from a config?
+        // Download conduit
+        Constants.setConduitPaths(stream.getConduit().getVersion());
+        if (stream.getConduit().shouldDownload()) {
+            if (!Constants.CONDUIT_MIXIN_PATH.toFile().exists()) {
+                Logger.info("Downloading Conduit-" + Constants.CONDUIT_VERSION);
+                try {
+                    SharedLaunch.downloadFile(new URL(Constants.CONDUIT_DOWNLOAD_PATH), Constants.CONDUIT_MIXIN_PATH.toFile());
+                } catch (IOException e) {
+                    Logger.fatal("Unable to download Conduit!");
+                    e.printStackTrace();
+                    // Don't exit here. Possibly they have old conduit version already.
+                }
+            }
+        }
         // Load Mixins
         File[] mixinFiles = Constants.MIXINS_PATH.toFile().listFiles();
         if (mixinFiles != null) {

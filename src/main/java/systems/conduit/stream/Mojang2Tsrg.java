@@ -15,12 +15,9 @@ public class Mojang2Tsrg {
     }
 
     public String typeToDescriptor(String type) {
-        if(type.endsWith("[]"))
-            return "[" + typeToDescriptor(type.substring(0, type.length() - 2));
-        if(type.contains("."))
-            return "L" + classMap.getOrDefault(type.replaceAll("\\.", "/"), type.replaceAll("\\.", "/")) + ";";
-
-        switch(type) {
+        if (type.endsWith("[]")) return "[" + typeToDescriptor(type.substring(0, type.length() - 2));
+        if (type.contains(".")) return "L" + classMap.getOrDefault(type.replaceAll("\\.", "/"), type.replaceAll("\\.", "/")) + ";";
+        switch (type) {
             case "void": return "V";
             case "int": return "I";
             case "float": return "F";
@@ -39,7 +36,7 @@ public class Mojang2Tsrg {
         BufferedReader buf = new BufferedReader(reader);
 
         boolean loop = true;
-        while(loop) {
+        while (loop) {
             String s = buf.readLine();
 
             if (s != null && !s.isEmpty()) {
@@ -48,13 +45,12 @@ public class Mojang2Tsrg {
                 if (s.startsWith(" ")) // We only care about lines mapping classes.
                     continue;
                 else { // Read the class name into the map.
-                    String parts[] = s.split(" ");
+                    String[] parts = s.split(" ");
                     assert parts.length == 3;
 
                     String className = parts[0].replaceAll("\\.", "/");
                     String obfName = parts[2].substring(0, parts[2].length() - 1);
-                    if(obfName.contains("."))
-                        obfName = obfName.replaceAll("\\.", "/");
+                    if (obfName.contains(".")) obfName = obfName.replaceAll("\\.", "/");
 
                     classMap.put(className, obfName);
                 }
@@ -72,17 +68,17 @@ public class Mojang2Tsrg {
         BufferedWriter buf = new BufferedWriter(writer);
 
         boolean loop = true;
-        while(loop) {
+        while (loop) {
             String s = txt.readLine();
             if (s != null && !s.isEmpty()) {
                 if (s.startsWith("#")) continue;
 
                 if (s.startsWith(" ")) { // This is a field or a method.
                     s = s.substring(4);
-                    String parts[] = s.split(" ");
+                    String[] parts = s.split(" ");
                     assert parts.length == 4;
 
-                    if(parts[1].endsWith(")")) { // This is a method.
+                    if (parts[1].endsWith(")")) { // This is a method.
                         String returnType = parts[0].contains(":") ? parts[0].split(":")[2] : parts[0]; // Split line numbers.
                         String obfName = parts[3];
                         String methodName = parts[1].split("\\(")[0]; // Separate params from name.
@@ -100,13 +96,12 @@ public class Mojang2Tsrg {
                         buf.write("\t" + obfName + " " + fieldName + "\n");
                     }
                 } else { // Classes have no dependencies.
-                    String parts[] = s.split(" ");
+                    String[] parts = s.split(" ");
                     assert parts.length == 3;
 
                     String className = parts[0].replaceAll("\\.", "/");
                     String obfName = parts[2].substring(0, parts[2].length() - 1);
-                    if(obfName.contains("."))
-                        obfName = obfName.replaceAll("\\.", "/");
+                    if (obfName.contains(".")) obfName = obfName.replaceAll("\\.", "/");
 
                     buf.write(obfName + " " + className + "\n"); // Write class entry.
                 }

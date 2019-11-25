@@ -57,7 +57,7 @@ public class SharedLaunch {
 
     public static void setupMinecraft(Path basePath, String version, Callback<File> callback) {
         // Set correct paths
-        Constants.setPaths(basePath, version);
+        Constants.setMinecraftPaths(basePath, version);
         // Make sure we have the correct directories
         if (!Constants.MINECRAFT_PATH.toFile().exists() && !Constants.MINECRAFT_PATH.toFile().mkdirs()) {
             Logger.fatal("Failed to make minecraft directory");

@@ -25,7 +25,7 @@ public class LibraryProcessor {
             if (loadedArtifacts.contains(library.getGroupId() + ":" + library.getArtifactId())) continue;
             File libraryPath;
             if (basePath != null) {
-                libraryPath = new File(basePath.toFile()+ File.separator + Constants.LIBRARIES_PATH.toFile() + File.separator + getPath(library));
+                libraryPath = new File(basePath.toFile() + File.separator + Constants.LIBRARIES_PATH.toFile() + File.separator + getPath(library));
             } else {
                 libraryPath = new File(Constants.LIBRARIES_PATH.toFile() + File.separator + getPath(library));
             }

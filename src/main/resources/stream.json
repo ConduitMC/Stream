@@ -1,0 +1,9 @@
+{
+  "minecraft": {
+    "version": "1.14.4"
+  },
+  "conduit": {
+    "version": "0.0.3",
+    "download": true
+  }
+}

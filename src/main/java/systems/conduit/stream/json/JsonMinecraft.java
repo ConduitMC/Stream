@@ -1,4 +1,4 @@
-package systems.conduit.stream.json.minecraft;
+package systems.conduit.stream.json;
 
 import lombok.Getter;
 

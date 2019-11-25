@@ -1,8 +1,9 @@
 plugins {
+    id "checkstyle"
     id "java"
+    id "java-gradle-plugin"
     id "java-library"
     id "maven-publish"
-    id "java-gradle-plugin"
 }
 
 repositories {
@@ -29,6 +30,10 @@ version = theVersion
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+checkstyle {
+    configFile = file("$rootDir/checkstyle.xml")
 }
 
 task install(dependsOn: [publishToMavenLocal])
