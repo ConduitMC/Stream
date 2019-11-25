@@ -21,6 +21,7 @@ public class ServerLaunchHandlerService implements ILaunchHandlerService {
     public void configureTransformationClassLoader(final ITransformingClassLoaderBuilder builder) {
         // Add transformation paths
         LauncherStart.PATHS.forEach(builder::addTransformationPath);
+        System.out.println(LauncherStart.PATHS);
     }
 
     @Override

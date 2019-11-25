@@ -16,7 +16,7 @@ public class Agent {
         Agent.inst = inst;
     }
 
-    public static void addClassPath(File f) {
+    protected static void addClassPath(File f) {
         ClassLoader cl = ClassLoader.getSystemClassLoader();
         try {
             if (inst != null) {
