@@ -32,14 +32,16 @@ public class StreamGradlePlugin implements Plugin<Project> {
                 System.out.println("Failed to make cache directory");
                 System.exit(0);
             }
-            // Get our plugin convention
+            // Get java convention and register java version if wanted
             JavaPluginConvention java = (JavaPluginConvention) project.getConvention().getPlugins().get("java");
             if (extension.getJava().isPresent()) {
                 java.setSourceCompatibility(extension.getJava().get());
                 java.setTargetCompatibility(extension.getJava().get());
             }
-            // Conduit dependency
-            project.getDependencies().add(Constants.GRADLE_CONFIGURATION_API, Constants.CONDUIT_DEPENDENCY + extension.getVersion().get());
+            // Conduit dependency if wanted
+            if (extension.getVersion().isPresent()) {
+                project.getDependencies().add(Constants.GRADLE_CONFIGURATION_API, Constants.CONDUIT_DEPENDENCY + extension.getVersion().get());
+            }
             // Register our dependencies to gradle
             final Callback<File> registerDependency = jar -> {
                 try {
