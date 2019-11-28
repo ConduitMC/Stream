@@ -4,12 +4,12 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
+@Getter
 public class JsonLibraryInfo {
 
-    @Getter private final String type;
-    @Getter private final String groupId;
-    @Getter private final String artifactId;
-    @Getter private final String version;
-    @Getter private final String url;
-
+    private final String type;
+    private final String groupId;
+    private final String artifactId;
+    private final String version;
+    private final String url;
 }

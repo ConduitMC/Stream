@@ -5,15 +5,13 @@ import lombok.Getter;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 public class MinecraftLibrary {
 
-    @Getter private String name = "";
-    @Getter private List<MinecraftRule> rules = new ArrayList<>();
+    private String name = "";
+    private List<MinecraftRule> rules = new ArrayList<>();
 
     public boolean isMac() {
-        for (MinecraftRule rule : rules) {
-            if (rule.isMac()) return true;
-        }
-        return false;
+        return rules.stream().anyMatch(MinecraftRule::isMac);
     }
 }

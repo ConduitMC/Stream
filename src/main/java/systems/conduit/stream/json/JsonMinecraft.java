@@ -5,5 +5,4 @@ import lombok.Getter;
 public class JsonMinecraft {
 
     @Getter private String version = "";
-
 }

@@ -2,9 +2,9 @@ package systems.conduit.stream.json;
 
 import lombok.Getter;
 
+@Getter
 public class JsonStream {
 
-    @Getter private JsonMinecraft minecraft = new JsonMinecraft();
-    @Getter private JsonConduit conduit = new JsonConduit();
-
+    private JsonMinecraft minecraft = new JsonMinecraft();
+    private JsonConduit conduit = new JsonConduit();
 }

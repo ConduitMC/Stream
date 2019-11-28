@@ -5,5 +5,4 @@ import lombok.Getter;
 public class MinecraftOS {
 
     @Getter private String name = "";
-
 }

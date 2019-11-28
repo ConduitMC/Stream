@@ -8,5 +8,4 @@ import java.util.List;
 public class MinecraftVersionManifest {
 
     @Getter private List<MinecraftVersionManifestType> versions = new ArrayList<>();
-
 }
