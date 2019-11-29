@@ -5,5 +5,4 @@ import lombok.Getter;
 public class MinecraftVersionInfo {
 
     @Getter private String url = "";
-
 }

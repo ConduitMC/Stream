@@ -5,9 +5,9 @@ import lombok.Getter;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 public class MinecraftVersion {
 
-    @Getter private MinecraftDownload downloads = new MinecraftDownload();
-    @Getter private List<MinecraftLibrary> libraries = new ArrayList<>();
-
+    private MinecraftDownload downloads = new MinecraftDownload();
+    private List<MinecraftLibrary> libraries = new ArrayList<>();
 }
