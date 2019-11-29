@@ -149,16 +149,7 @@ public class SharedLaunch {
             }
             // Convert Minecraft mappings
             Logger.info("Converting Minecraft mappings");
-            Mojang2Tsrg m2t = new Mojang2Tsrg();
-            try {
-                m2t.loadClasses(Constants.SERVER_MAPPINGS_PATH.toFile());
-                m2t.writeTsrg(Constants.SERVER_MAPPINGS_PATH.toFile(), Constants.SERVER_MAPPINGS_CONVERTED_PATH.toFile());
-            } catch (IOException e) {
-                Logger.fatal("Error converting Minecraft server mappings");
-                e.printStackTrace();
-                System.exit(0);
-            }
-            Constants.SERVER_MAPPINGS_PATH.toFile().delete();
+            new Mojang2Tsrg(Constants.SERVER_MAPPINGS_PATH, Constants.SERVER_MAPPINGS_CONVERTED_PATH);
             // Remapping Minecraft
             Logger.info("Remapping Minecraft (This might take a bit)");
             ClassLoader classLoader = new URLClassLoader(specialSourcePaths.toArray(new URL[]{}), ClassLoader.getSystemClassLoader());
