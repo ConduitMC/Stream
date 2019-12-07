@@ -78,6 +78,7 @@ public class StreamGradlePlugin implements Plugin<Project> {
         project.getRepositories().mavenLocal();
         project.getRepositories().jcenter();
         project.getRepositories().maven(repo -> repo.setUrl(Constants.CONDUIT_REPO));
+        project.getRepositories().maven(repo -> repo.setUrl(Constants.MINECRAFT_REPO));
         // Default dependencies
         project.getDependencies().add(Constants.GRADLE_CONFIGURATION_ANNOTATION, Constants.LOMBOK_DEPENDENCY);
         project.getDependencies().add(Constants.GRADLE_CONFIGURATION_API, Constants.LOMBOK_DEPENDENCY);
