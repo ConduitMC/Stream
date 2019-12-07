@@ -34,7 +34,7 @@ public class Constants {
 
     public static final String VERSION_MANIFEST_ENDPOINT = "https://launchermeta.mojang.com/mc/game/version_manifest.json";
 
-    public static final String CONDUIT_REPO = "https://libraries.minecraft.net/";
+    public static final String CONDUIT_REPO = "https://repo.conduit.systems/repository/releases/";
     public static final String MINECRAFT_REPO = "https://libraries.minecraft.net/";
     public static final String DEFAULT_REPO = "https://jcenter.bintray.com/";
 
