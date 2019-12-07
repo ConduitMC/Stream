@@ -58,6 +58,6 @@ public class Constants {
     public static void setConduitPaths(String conduitVersion) {
         CONDUIT_VERSION = conduitVersion;
         CONDUIT_MIXIN_PATH = MIXINS_PATH.resolve("Conduit-" + CONDUIT_VERSION + ".jar");
-        CONDUIT_DOWNLOAD_PATH = "https://repo.conduit.systems/repository/releases/systems/conduit/Conduit/" + CONDUIT_VERSION +  "/Conduit-" + CONDUIT_VERSION + ".jar";
+        CONDUIT_DOWNLOAD_PATH = CONDUIT_REPO + "systems/conduit/Conduit/" + CONDUIT_VERSION +  "/Conduit-" + CONDUIT_VERSION + ".jar";
     }
 }
