@@ -40,7 +40,7 @@ public class StreamGradlePlugin implements Plugin<Project> {
             }
             // Conduit dependency if wanted
             if (extension.getVersion().isPresent()) {
-                Logger.info("Loading Conduit: " + extension.getVersion());
+                Logger.info("Loading Conduit: " + extension.getVersion().get());
                 project.getDependencies().add(Constants.GRADLE_CONFIGURATION_API, Constants.CONDUIT_DEPENDENCY + extension.getVersion().get());
                 Logger.info("Loaded Conduit");
             }
