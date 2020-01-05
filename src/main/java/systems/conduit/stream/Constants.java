@@ -34,7 +34,7 @@ public class Constants {
 
     public static final String VERSION_MANIFEST_ENDPOINT = "https://launchermeta.mojang.com/mc/game/version_manifest.json";
 
-    public static final String CONDUIT_REPO = "https://libraries.minecraft.net/";
+    public static final String CONDUIT_REPO = "https://repo.conduit.systems/repository/releases/";
     public static final String MINECRAFT_REPO = "https://libraries.minecraft.net/";
     public static final String DEFAULT_REPO = "https://jcenter.bintray.com/";
 
@@ -58,6 +58,6 @@ public class Constants {
     public static void setConduitPaths(String conduitVersion) {
         CONDUIT_VERSION = conduitVersion;
         CONDUIT_MIXIN_PATH = MIXINS_PATH.resolve("Conduit-" + CONDUIT_VERSION + ".jar");
-        CONDUIT_DOWNLOAD_PATH = "https://repo.conduit.systems/repository/releases/systems/conduit/Conduit/" + CONDUIT_VERSION +  "/Conduit-" + CONDUIT_VERSION + ".jar";
+        CONDUIT_DOWNLOAD_PATH = CONDUIT_REPO + "systems/conduit/Conduit/" + CONDUIT_VERSION +  "/Conduit-" + CONDUIT_VERSION + ".jar";
     }
 }

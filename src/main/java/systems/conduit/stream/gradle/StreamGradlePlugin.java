@@ -60,10 +60,13 @@ public class StreamGradlePlugin implements Plugin<Project> {
             SharedLaunch.downloadRequiredLibraries(cacheFolder, registerDependency);
             // Download default libraries
             SharedLaunch.downloadDefaultLibraries(cacheFolder, registerDependency);
-            // Download/load minecraft libraries and download and remap minecraft if need to
-            SharedLaunch.setupMinecraft(cacheFolder, extension.getMinecraft().get(), registerDependency);
-            // Load minecraft
-            registerDependency.callback(Constants.SERVER_MAPPED_JAR_PATH.toFile());
+            // Make sure minecraft is present. It always should be if done right.
+            if (extension.getMinecraft().isPresent()) {
+                // Download/load minecraft libraries and download and remap minecraft if need to
+                SharedLaunch.setupMinecraft(cacheFolder, extension.getMinecraft().get(), registerDependency);
+                // Load minecraft
+                registerDependency.callback(Constants.SERVER_MAPPED_JAR_PATH.toFile());
+            }
         });
     }
 
@@ -80,6 +83,7 @@ public class StreamGradlePlugin implements Plugin<Project> {
         project.getRepositories().mavenLocal();
         project.getRepositories().jcenter();
         project.getRepositories().maven(repo -> repo.setUrl(Constants.CONDUIT_REPO));
+        project.getRepositories().maven(repo -> repo.setUrl(Constants.MINECRAFT_REPO));
         // Default dependencies
         project.getDependencies().add(Constants.GRADLE_CONFIGURATION_ANNOTATION, Constants.LOMBOK_DEPENDENCY);
         project.getDependencies().add(Constants.GRADLE_CONFIGURATION_API, Constants.LOMBOK_DEPENDENCY);
