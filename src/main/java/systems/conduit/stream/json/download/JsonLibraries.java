@@ -1,12 +1,16 @@
 package systems.conduit.stream.json.download;
 
-import lombok.Getter;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public class JsonLibraries {
 
-    @Getter private List<JsonLibraryInfo> libs = new ArrayList<>();
+    private final List<JsonLibraryInfo> libs;
 
+    public JsonLibraries(List<JsonLibraryInfo> libs) {
+        this.libs = libs;
+    }
+
+    public List<JsonLibraryInfo> getLibs() {
+        return libs;
+    }
 }

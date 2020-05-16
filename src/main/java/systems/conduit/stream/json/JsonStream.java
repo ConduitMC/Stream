@@ -1,10 +1,20 @@
 package systems.conduit.stream.json;
 
-import lombok.Getter;
-
-@Getter
 public class JsonStream {
 
-    private JsonMinecraft minecraft = new JsonMinecraft();
-    private JsonConduit conduit = new JsonConduit();
+    private final JsonMinecraft minecraft;
+    private final JsonConduit conduit;
+
+    public JsonStream(JsonMinecraft minecraft, JsonConduit conduit) {
+        this.minecraft = minecraft;
+        this.conduit = conduit;
+    }
+
+    public JsonMinecraft getMinecraft() {
+        return minecraft;
+    }
+
+    public JsonConduit getConduit() {
+        return conduit;
+    }
 }

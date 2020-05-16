@@ -4,7 +4,6 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.UnknownTaskException;
 import org.gradle.api.artifacts.Dependency;
-import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.tasks.TaskContainer;
 import systems.conduit.stream.Callback;
 import systems.conduit.stream.Constants;
@@ -32,16 +31,10 @@ public class StreamGradlePlugin implements Plugin<Project> {
                 System.out.println("Failed to make cache directory");
                 System.exit(0);
             }
-            // Get java convention and register java version if wanted
-            JavaPluginConvention java = (JavaPluginConvention) project.getConvention().getPlugins().get("java");
-            if (extension.getJava().isPresent()) {
-                java.setSourceCompatibility(extension.getJava().get());
-                java.setTargetCompatibility(extension.getJava().get());
-            }
             // Conduit dependency if wanted
-            if (extension.getVersion().isPresent()) {
-                Logger.info("Loading Conduit: " + extension.getVersion().get());
-                project.getDependencies().add(Constants.GRADLE_CONFIGURATION_API, Constants.CONDUIT_DEPENDENCY + extension.getVersion().get());
+            if (extension.getVersion() != null) {
+                Logger.info("Loading Conduit: " + extension.getVersion());
+                project.getDependencies().add(Constants.GRADLE_CONFIGURATION_API, Constants.CONDUIT_DEPENDENCY + extension.getVersion());
                 Logger.info("Loaded Conduit");
             }
             // Register our dependencies to gradle
@@ -61,9 +54,9 @@ public class StreamGradlePlugin implements Plugin<Project> {
             // Download default libraries
             SharedLaunch.downloadDefaultLibraries(cacheFolder, registerDependency);
             // Make sure minecraft is present. It always should be if done right.
-            if (extension.getMinecraft().isPresent()) {
+            if (extension.getMinecraft() != null) {
                 // Download/load minecraft libraries and download and remap minecraft if need to
-                SharedLaunch.setupMinecraft(cacheFolder, extension.getMinecraft().get(), registerDependency);
+                SharedLaunch.setupMinecraft(cacheFolder, extension.getMinecraft(), registerDependency);
                 // Load minecraft
                 registerDependency.callback(Constants.SERVER_MAPPED_JAR_PATH.toFile());
             }
@@ -76,17 +69,12 @@ public class StreamGradlePlugin implements Plugin<Project> {
         // Set our user agent
         System.setProperty("http.agent", Constants.USER_AGENT);
         // Default plugins
-        project.apply(Collections.singletonMap("plugin", "java"));
-        project.apply(Collections.singletonMap("plugin", "java-library"));
         project.apply(Collections.singletonMap("plugin", "maven-publish"));
         // Default repositories
         project.getRepositories().mavenLocal();
         project.getRepositories().jcenter();
         project.getRepositories().maven(repo -> repo.setUrl(Constants.CONDUIT_REPO));
         project.getRepositories().maven(repo -> repo.setUrl(Constants.MINECRAFT_REPO));
-        // Default dependencies
-        project.getDependencies().add(Constants.GRADLE_CONFIGURATION_ANNOTATION, Constants.LOMBOK_DEPENDENCY);
-        project.getDependencies().add(Constants.GRADLE_CONFIGURATION_API, Constants.LOMBOK_DEPENDENCY);
         // Default install maven task
         if (!doesInstallExist(project.getTasks())) project.getTasks().register("install").configure(task -> task.dependsOn("publishToMavenLocal"));
     }

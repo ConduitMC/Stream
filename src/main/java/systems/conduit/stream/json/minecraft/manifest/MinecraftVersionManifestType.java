@@ -1,10 +1,21 @@
 package systems.conduit.stream.json.minecraft.manifest;
 
-import lombok.Getter;
 
-@Getter
 public class MinecraftVersionManifestType {
 
-    private String id = "";
-    private String url = "";
+    private final String id;
+    private final String url;
+
+    public MinecraftVersionManifestType(String id, String url) {
+        this.id = id;
+        this.url = url;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getUrl() {
+        return url;
+    }
 }

@@ -1,13 +1,24 @@
 package systems.conduit.stream.json;
 
-import lombok.Getter;
-
 public class JsonConduit {
 
-    @Getter private String version = "";
-    private boolean download = false;
+    private final String version;
+    private final boolean download;
+
+    public JsonConduit(String version) {
+        this(version, false);
+    }
+
+    public JsonConduit(String version, boolean download) {
+        this.version = version;
+        this.download = download;
+    }
 
     public boolean shouldDownload() {
         return download;
+    }
+
+    public String getVersion() {
+        return version;
     }
 }

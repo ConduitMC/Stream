@@ -46,7 +46,7 @@ public class LauncherStart {
             }
         }
         // Load Stream from json to class
-        JsonStream stream = new JsonStream();
+        JsonStream stream = null;
         try (BufferedReader reader = new BufferedReader(new FileReader(Constants.STREAM_JSON_PATH.toFile()))) {
             Gson gson = new GsonBuilder().create();
             stream = gson.fromJson(reader, JsonStream.class);
@@ -56,7 +56,12 @@ public class LauncherStart {
             System.exit(0);
         }
         // Download/load minecraft libraries and download and remap minecraft if need to
-        SharedLaunch.setupMinecraft(null, stream.getMinecraft().getVersion(), registerJar);
+        if (stream != null) {
+            SharedLaunch.setupMinecraft(null, stream.getMinecraft().getVersion(), registerJar);
+        } else {
+            Logger.fatal("Error parsing stream json!");
+            System.exit(0);
+        }
         // Load minecraft
         Logger.info("Loading Minecraft remapped");
         LauncherStart.PATHS.add(Constants.SERVER_MAPPED_JAR_PATH);

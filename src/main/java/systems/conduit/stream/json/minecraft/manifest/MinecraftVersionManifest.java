@@ -1,11 +1,16 @@
 package systems.conduit.stream.json.minecraft.manifest;
 
-import lombok.Getter;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public class MinecraftVersionManifest {
 
-    @Getter private List<MinecraftVersionManifestType> versions = new ArrayList<>();
+    private final List<MinecraftVersionManifestType> versions;
+
+    public MinecraftVersionManifest(List<MinecraftVersionManifestType> versions) {
+        this.versions = versions;
+    }
+
+    public List<MinecraftVersionManifestType> getVersions() {
+        return versions;
+    }
 }

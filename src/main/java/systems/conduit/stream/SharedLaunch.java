@@ -42,7 +42,7 @@ public class SharedLaunch {
 
     public static void downloadDefaultLibraries(Path basePath, Callback<File> callback) {
         // Load default libraries from json to class
-        JsonLibraries defaults = new JsonLibraries();
+        JsonLibraries defaults = new JsonLibraries(new ArrayList<>());
         try (Reader reader = new InputStreamReader(SharedLaunch.class.getResourceAsStream("/" + Constants.DEFAULTS_JSON), StandardCharsets.UTF_8)) {
             Gson gson = new GsonBuilder().create();
             defaults = gson.fromJson(reader, JsonLibraries.class);
@@ -56,6 +56,10 @@ public class SharedLaunch {
     }
 
     public static void setupMinecraft(Path basePath, String version, Callback<File> callback) {
+        if (version == null) {
+            Logger.fatal("Can not find minecraft version");
+            System.exit(0);
+        }
         // Set correct paths
         Constants.setMinecraftPaths(basePath, version);
         // Make sure we have the correct directories

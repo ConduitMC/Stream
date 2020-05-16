@@ -1,17 +1,26 @@
 package systems.conduit.stream.json.minecraft;
 
-import lombok.Getter;
-
-import java.util.ArrayList;
 import java.util.List;
 
-@Getter
 public class MinecraftLibrary {
 
-    private String name = "";
-    private List<MinecraftRule> rules = new ArrayList<>();
+    private final String name;
+    private final List<MinecraftRule> rules;
+
+    public MinecraftLibrary(String name, List<MinecraftRule> rules) {
+        this.name = name;
+        this.rules = rules;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public List<MinecraftRule> getRules() {
+        return rules;
+    }
 
     public boolean isMac() {
-        return rules.stream().anyMatch(MinecraftRule::isMac);
+        return rules != null && rules.stream().anyMatch(MinecraftRule::isMac);
     }
 }

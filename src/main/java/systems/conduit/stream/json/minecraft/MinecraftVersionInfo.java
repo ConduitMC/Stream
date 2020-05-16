@@ -1,8 +1,14 @@
 package systems.conduit.stream.json.minecraft;
 
-import lombok.Getter;
-
 public class MinecraftVersionInfo {
 
-    @Getter private String url = "";
+    private final String url;
+
+    public MinecraftVersionInfo(String url) {
+        this.url = url;
+    }
+
+    public String getUrl() {
+        return url;
+    }
 }

@@ -1,8 +1,14 @@
 package systems.conduit.stream.json.minecraft;
 
-import lombok.Getter;
-
 public class MinecraftOS {
 
-    @Getter private String name = "";
+    private final String name;
+
+    public MinecraftOS(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
 }

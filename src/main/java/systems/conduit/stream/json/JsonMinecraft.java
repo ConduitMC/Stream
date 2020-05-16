@@ -1,8 +1,14 @@
 package systems.conduit.stream.json;
 
-import lombok.Getter;
-
 public class JsonMinecraft {
 
-    @Getter private String version = "";
+    private final String version;
+
+    public JsonMinecraft(String version) {
+        this.version = version;
+    }
+
+    public String getVersion() {
+        return version;
+    }
 }

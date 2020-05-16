@@ -38,7 +38,6 @@ public class Constants {
     public static final String MINECRAFT_REPO = "https://libraries.minecraft.net/";
     public static final String DEFAULT_REPO = "https://jcenter.bintray.com/";
 
-    public static final String LOMBOK_DEPENDENCY = "org.projectlombok:lombok:1.18.10";
     public static final String CONDUIT_DEPENDENCY = "systems.conduit:Conduit:";
     public static final String GRADLE_CONFIGURATION_ANNOTATION = "annotationProcessor";
     public static final String GRADLE_CONFIGURATION_API = "api";
