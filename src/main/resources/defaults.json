@@ -80,6 +80,12 @@
     },
     {
       "type": "maven",
+      "groupId": "org.jetbrains.kotlin",
+      "artifactId": "kotlin-reflect",
+      "version": "1.3.72"
+    },
+    {
+      "type": "maven",
       "groupId": "net.md-5",
       "artifactId": "SpecialSource",
       "version": "1.8.6",

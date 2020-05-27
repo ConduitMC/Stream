@@ -23,9 +23,11 @@ public class Agent {
                 inst.appendToSystemClassLoaderSearch(new JarFile(f));
                 return;
             }
-            Method m = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
-            m.setAccessible(true);
-            m.invoke(cl, f.toURI().toURL());
+            if (cl instanceof URLClassLoader) {
+                Method m = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
+                m.setAccessible(true);
+                m.invoke(cl, f.toURI().toURL());
+            }
         } catch (Throwable e) {
             System.out.println("Add to classpath error!");
             e.printStackTrace();

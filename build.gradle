@@ -16,7 +16,8 @@ repositories {
 
 dependencies {
     implementation "com.google.code.gson:gson:2.8.0"
-    compileOnly "org.apache.logging.log4j:log4j-api:2.8.1"
+    implementation "org.apache.logging.log4j:log4j-api:2.11.2"
+    implementation "org.apache.logging.log4j:log4j-core:2.11.2"
     compileOnly "net.md-5:SpecialSource:1.8.6"
     compileOnly "cpw.mods:modlauncher:4.2.0"
     compileOnly "org.spongepowered:mixin:0.8"
@@ -54,12 +55,18 @@ gradlePlugin {
     }
 }
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-        }
+task copyResources {
+    copy {
+        from ('build/processedResources/jvm/main')
+        into 'build/classes/kotlin/jvm/main'
     }
+}
+
+compileJava.doLast {
+    tasks.copyResources
+}
+
+publishing {
     repositories {
         maven {
             credentials {

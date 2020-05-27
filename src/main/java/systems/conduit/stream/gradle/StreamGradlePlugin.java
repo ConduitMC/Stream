@@ -37,6 +37,8 @@ public class StreamGradlePlugin implements Plugin<Project> {
                 project.getDependencies().add(Constants.GRADLE_CONFIGURATION_API, Constants.CONDUIT_DEPENDENCY + extension.getVersion());
                 Logger.info("Loaded Conduit");
             }
+            // TODO: Replace version with our gradle.properties one
+            project.getDependencies().add(Constants.GRADLE_CONFIGURATION_API, Constants.STREAM_DEPENDENCY + "1.0.1");
             // Register our dependencies to gradle
             final Callback<File> registerDependency = jar -> {
                 try {
