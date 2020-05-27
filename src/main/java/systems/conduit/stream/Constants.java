@@ -10,6 +10,8 @@ public class Constants {
     public static String MINECRAFT_VERSION = "1.15.2";
     public static String CONDUIT_VERSION = "0.0.3";
 
+    public static boolean DEBUG = false;
+
     public static final String LOGGER_NAME = "Launcher";
 
     public static final String DEFAULTS_JSON = "defaults.json";

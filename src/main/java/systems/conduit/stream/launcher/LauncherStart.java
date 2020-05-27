@@ -25,9 +25,6 @@ public class LauncherStart {
     public static final List<String> MIXINS = new ArrayList<>();
     public static final List<Path> PATHS = new ArrayList<>();
 
-    public static boolean debug = false;
-    public static String minecraft_version = "1.15.2";
-
     public static void main(String... args) {
         System.setProperty("http.agent", Constants.USER_AGENT);
         Logger.shouldUseLogger = true;
@@ -39,7 +36,7 @@ public class LauncherStart {
         // Download default libraries
         SharedLaunch.downloadDefaultLibraries(null, registerJar);
         // Add Stream json if does not exist
-        if (!Constants.STREAM_JSON_PATH.toFile().exists() && !debug) {
+        if (!Constants.STREAM_JSON_PATH.toFile().exists() && !Constants.DEBUG) {
             try (InputStream inputStream = SharedLaunch.class.getResourceAsStream("/" + Constants.STREAM_JSON)) {
                 Files.copy(inputStream, Constants.STREAM_JSON_PATH, StandardCopyOption.REPLACE_EXISTING);
             } catch (IOException e) {
@@ -50,7 +47,7 @@ public class LauncherStart {
         }
         // Load Stream from json to class
         JsonStream stream = null;
-        if (Constants.STREAM_JSON_PATH.toFile().exists() && !debug) {
+        if (Constants.STREAM_JSON_PATH.toFile().exists() && !Constants.DEBUG) {
             try (BufferedReader reader = new BufferedReader(new FileReader(Constants.STREAM_JSON_PATH.toFile()))) {
                 Gson gson = new GsonBuilder().create();
                 stream = gson.fromJson(reader, JsonStream.class);
@@ -62,7 +59,7 @@ public class LauncherStart {
         }
         // Download/load minecraft libraries and download and remap minecraft if need to
         Logger.info("Setting up Minecraft");
-        if (!debug) {
+        if (!Constants.DEBUG) {
             if (stream != null) {
                 SharedLaunch.setupMinecraft(null, stream.getMinecraft().getVersion(), registerJar);
             } else {
@@ -70,7 +67,7 @@ public class LauncherStart {
                 System.exit(0);
             }
         } else {
-            SharedLaunch.setupMinecraft(null, minecraft_version, registerJar);
+            SharedLaunch.setupMinecraft(null, Constants.MINECRAFT_VERSION, registerJar);
         }
         // Load minecraft
         Logger.info("Loading Minecraft remapped");
@@ -81,7 +78,7 @@ public class LauncherStart {
             Logger.fatal("Failed to make .mixins directory");
         }
         // Download conduit
-        if (stream != null && !debug) {
+        if (stream != null && !Constants.DEBUG) {
             Constants.setConduitPaths(stream.getConduit().getVersion());
             if (stream.getConduit().shouldDownload()) {
                 if (!Constants.CONDUIT_MIXIN_PATH.toFile().exists()) {
