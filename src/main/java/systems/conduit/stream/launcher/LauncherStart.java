@@ -71,7 +71,6 @@ public class LauncherStart {
         }
         // Load minecraft
         if (!Constants.DEBUG) {
-            System.out.println("Test");
             Logger.info("Loading Minecraft remapped");
             LauncherStart.PATHS.add(Constants.SERVER_MAPPED_JAR_PATH);
             Logger.info("Loaded Minecraft remapped");
