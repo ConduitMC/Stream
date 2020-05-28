@@ -70,9 +70,12 @@ public class LauncherStart {
             SharedLaunch.setupMinecraft(null, Constants.MINECRAFT_VERSION, registerJar);
         }
         // Load minecraft
-        Logger.info("Loading Minecraft remapped");
-        if (!Constants.DEBUG) LauncherStart.PATHS.add(Constants.SERVER_MAPPED_JAR_PATH);
-        Logger.info("Loaded Minecraft remapped");
+        if (!Constants.DEBUG) {
+            System.out.println("Test");
+            Logger.info("Loading Minecraft remapped");
+            LauncherStart.PATHS.add(Constants.SERVER_MAPPED_JAR_PATH);
+            Logger.info("Loaded Minecraft remapped");
+        }
         // Create the mixins folder
         if (!Constants.MIXINS_PATH.toFile().exists() && !Constants.MIXINS_PATH.toFile().mkdirs()) {
             Logger.fatal("Failed to make .mixins directory");

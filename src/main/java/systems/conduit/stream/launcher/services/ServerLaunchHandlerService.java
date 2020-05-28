@@ -5,6 +5,7 @@ import cpw.mods.modlauncher.api.ITransformingClassLoader;
 import cpw.mods.modlauncher.api.ITransformingClassLoaderBuilder;
 import org.spongepowered.asm.mixin.Mixins;
 import systems.conduit.stream.Constants;
+import systems.conduit.stream.Logger;
 import systems.conduit.stream.launcher.LauncherStart;
 
 import java.io.File;
@@ -27,11 +28,15 @@ public class ServerLaunchHandlerService implements ILaunchHandlerService {
         if (Constants.DEBUG) {
             Path minecraft = getLoadedJar("net.minecraft.server.MinecraftServer");
             if (minecraft != null) {
+                Logger.info("Loading Conduit");
                 builder.addTransformationPath(minecraft);
+                Logger.info("Loaded Conduit");
             }
             Path conduit = getLoadedJar("systems.conduit.core.Conduit");
             if (conduit != null) {
+                Logger.info("Loading Minecraft remapped");
                 builder.addTransformationPath(conduit);
+                Logger.info("Loaded Minecraft remapped");
             }
         }
     }
@@ -51,11 +56,9 @@ public class ServerLaunchHandlerService implements ILaunchHandlerService {
     private Path getLoadedJar(String className) {
         // Returns the jars from the classpath if loaded by intellij
         try {
-            return new File(
-                    Class.forName(className).getProtectionDomain().getCodeSource().getLocation().toURI()
-            ).toPath();
+            return new File(Class.forName(className).getProtectionDomain().getCodeSource().getLocation().toURI()).toPath();
         } catch (Exception ignored) {
+            return null;
         }
-        return null;
     }
 }
