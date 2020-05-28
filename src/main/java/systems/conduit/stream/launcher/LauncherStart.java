@@ -71,7 +71,7 @@ public class LauncherStart {
         }
         // Load minecraft
         Logger.info("Loading Minecraft remapped");
-        LauncherStart.PATHS.add(Constants.SERVER_MAPPED_JAR_PATH);
+        if (!Constants.DEBUG) LauncherStart.PATHS.add(Constants.SERVER_MAPPED_JAR_PATH);
         Logger.info("Loaded Minecraft remapped");
         // Create the mixins folder
         if (!Constants.MIXINS_PATH.toFile().exists() && !Constants.MIXINS_PATH.toFile().mkdirs()) {

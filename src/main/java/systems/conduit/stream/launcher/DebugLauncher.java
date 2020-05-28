@@ -12,7 +12,6 @@ public class DebugLauncher {
         Constants.DEBUG = true;
         LauncherStart.MIXINS.add("mixins.conduit.json");
         Logger.shouldUseLogger = true;
-        System.setProperty("log4j2.loggerContextFactory", "org.apache.logging.log4j.core.impl.Log4jContextFactory");
         if (args.length <= 0) {
             Logger.fatal("Specify a minecraft version as the first argument");
             return;
