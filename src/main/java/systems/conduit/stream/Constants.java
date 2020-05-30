@@ -46,6 +46,9 @@ public class Constants {
 
     public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11";
 
+    public static final String MAIN_SERVER_FILE = "net.minecraft.server.MinecraftServer";
+    public static final String MAIN_CONDUIT_FILE = "systems.conduit.core.Conduit";
+
     public static void setMinecraftPaths(Path basePath, String minecraftVersion) {
         MINECRAFT_VERSION = minecraftVersion;
         if (basePath != null) MINECRAFT_PATH = basePath.resolve(MINECRAFT_PATH);

@@ -16,27 +16,22 @@ import java.util.concurrent.Callable;
 public class ServerLaunchHandlerService implements ILaunchHandlerService {
 
     @Override
-    public String name() {
-        return "minecraft-server";
-    }
-
-    @Override
     public void configureTransformationClassLoader(final ITransformingClassLoaderBuilder builder) {
         // Add transformation paths
         LauncherStart.PATHS.forEach(builder::addTransformationPath);
         // Load Minecraft and Conduit jars if in debug
         if (Constants.DEBUG) {
-            Path minecraft = getLoadedJar("net.minecraft.server.MinecraftServer");
+            Path minecraft = getLoadedJar(Constants.MAIN_SERVER_FILE);
             if (minecraft != null) {
-                Logger.info("Loading Conduit");
+                Logger.info("Transforming Minecraft remapped");
                 builder.addTransformationPath(minecraft);
-                Logger.info("Loaded Conduit");
+                Logger.info("Transformed Minecraft remapped");
             }
-            Path conduit = getLoadedJar("systems.conduit.core.Conduit");
+            Path conduit = getLoadedJar(Constants.MAIN_CONDUIT_FILE);
             if (conduit != null) {
-                Logger.info("Loading Minecraft remapped");
+                Logger.info("Transforming Conduit");
                 builder.addTransformationPath(conduit);
-                Logger.info("Loaded Minecraft remapped");
+                Logger.info("Transformed Conduit");
             }
         }
     }
@@ -46,7 +41,7 @@ public class ServerLaunchHandlerService implements ILaunchHandlerService {
         // Add mixins to configure
         LauncherStart.MIXINS.forEach(Mixins::addConfiguration);
         return () -> {
-            final Class<?> mcClass = Class.forName("net.minecraft.server.MinecraftServer", true, launchClassLoader.getInstance());
+            final Class<?> mcClass = Class.forName(Constants.MAIN_SERVER_FILE, true, launchClassLoader.getInstance());
             final Method mcClassMethod = mcClass.getMethod("main", String[].class);
             mcClassMethod.invoke(null, (Object) args);
             return null;
@@ -60,5 +55,10 @@ public class ServerLaunchHandlerService implements ILaunchHandlerService {
         } catch (Exception ignored) {
             return null;
         }
+    }
+
+    @Override
+    public String name() {
+        return "minecraft-server";
     }
 }
