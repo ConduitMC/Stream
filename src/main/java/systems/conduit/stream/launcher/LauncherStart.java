@@ -25,7 +25,7 @@ public class LauncherStart {
     public static final List<String> MIXINS = new ArrayList<>();
     public static final List<Path> PATHS = new ArrayList<>();
 
-    public static void main(String[] args) {
+    public static void main(String... args) {
         System.setProperty("http.agent", Constants.USER_AGENT);
         Logger.shouldUseLogger = true;
         System.out.println("Starting launcher...");
@@ -36,7 +36,7 @@ public class LauncherStart {
         // Download default libraries
         SharedLaunch.downloadDefaultLibraries(null, registerJar);
         // Add Stream json if does not exist
-        if (!Constants.STREAM_JSON_PATH.toFile().exists()) {
+        if (!Constants.STREAM_JSON_PATH.toFile().exists() && !Constants.DEBUG) {
             try (InputStream inputStream = SharedLaunch.class.getResourceAsStream("/" + Constants.STREAM_JSON)) {
                 Files.copy(inputStream, Constants.STREAM_JSON_PATH, StandardCopyOption.REPLACE_EXISTING);
             } catch (IOException e) {
@@ -46,77 +46,95 @@ public class LauncherStart {
             }
         }
         // Load Stream from json to class
-        JsonStream stream = new JsonStream();
-        try (BufferedReader reader = new BufferedReader(new FileReader(Constants.STREAM_JSON_PATH.toFile()))) {
-            Gson gson = new GsonBuilder().create();
-            stream = gson.fromJson(reader, JsonStream.class);
-        } catch (IOException e) {
-            Logger.fatal("Error reading Stream json");
-            e.printStackTrace();
-            System.exit(0);
+        JsonStream stream = null;
+        if (Constants.STREAM_JSON_PATH.toFile().exists() && !Constants.DEBUG) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(Constants.STREAM_JSON_PATH.toFile()))) {
+                Gson gson = new GsonBuilder().create();
+                stream = gson.fromJson(reader, JsonStream.class);
+            } catch (IOException e) {
+                Logger.fatal("Error reading Stream json");
+                e.printStackTrace();
+                System.exit(0);
+            }
         }
         // Download/load minecraft libraries and download and remap minecraft if need to
-        SharedLaunch.setupMinecraft(null, stream.getMinecraft().getVersion(), registerJar);
+        Logger.info("Setting up Minecraft");
+        if (!Constants.DEBUG) {
+            if (stream != null) {
+                SharedLaunch.setupMinecraft(null, stream.getMinecraft().getVersion(), registerJar);
+            } else {
+                Logger.fatal("Error parsing stream json!");
+                System.exit(0);
+            }
+        } else {
+            SharedLaunch.setupMinecraft(null, Constants.MINECRAFT_VERSION, registerJar);
+        }
+        Logger.info("Set up Minecraft");
         // Load minecraft
-        Logger.info("Loading Minecraft remapped");
-        LauncherStart.PATHS.add(Constants.SERVER_MAPPED_JAR_PATH);
-        Logger.info("Loaded Minecraft remapped");
+        if (!Constants.DEBUG) {
+            Logger.info("Loading Minecraft remapped");
+            LauncherStart.PATHS.add(Constants.SERVER_MAPPED_JAR_PATH);
+            Logger.info("Loaded Minecraft remapped");
+        }
         // Create the mixins folder
         if (!Constants.MIXINS_PATH.toFile().exists() && !Constants.MIXINS_PATH.toFile().mkdirs()) {
-            Logger.fatal("Failed to make mixins directory");
-            System.exit(0);
+            Logger.fatal("Failed to make .mixins directory");
         }
         // Download conduit
-        Constants.setConduitPaths(stream.getConduit().getVersion());
-        if (stream.getConduit().shouldDownload()) {
-            if (!Constants.CONDUIT_MIXIN_PATH.toFile().exists()) {
-                Logger.info("Downloading Conduit-" + Constants.CONDUIT_VERSION);
-                try {
-                    SharedLaunch.downloadFile(new URL(Constants.CONDUIT_DOWNLOAD_PATH), Constants.CONDUIT_MIXIN_PATH.toFile());
-                } catch (IOException e) {
-                    Logger.fatal("Unable to download Conduit!");
-                    e.printStackTrace();
-                    // Don't exit here. Possibly they have old conduit version already.
+        if (stream != null && !Constants.DEBUG) {
+            Constants.setConduitPaths(stream.getConduit().getVersion());
+            if (stream.getConduit().shouldDownload()) {
+                if (!Constants.CONDUIT_MIXIN_PATH.toFile().exists()) {
+                    Logger.info("Downloading Conduit-" + Constants.CONDUIT_VERSION);
+                    try {
+                        SharedLaunch.downloadFile(new URL(Constants.CONDUIT_DOWNLOAD_PATH), Constants.CONDUIT_MIXIN_PATH.toFile());
+                    } catch (IOException e) {
+                        Logger.fatal("Unable to download Conduit!");
+                        e.printStackTrace();
+                        // Don't exit here. Possibly they have old conduit version already.
+                    }
                 }
             }
         }
         // Load Mixins
-        File[] mixinFiles = Constants.MIXINS_PATH.toFile().listFiles();
-        if (mixinFiles != null) {
-            for (File file : mixinFiles) {
-                // Skip folders
-                if (!file.isFile()) continue;
-                // Make sure that it ends with .jar
-                if (!file.getName().endsWith(".jar")) continue;
-                // Since it is a file, and it ends with .jar, we can proceed with attempting to load it.
-                String properFileName = file.getName().substring(0, file.getName().length() - 4);
-                try {
-                    // Get jar file
-                    JarFile jarFile = new JarFile(file);
-                    // Load libraries from json
-                    ZipEntry libZip = jarFile.getEntry("libraries.json");
-                    if (libZip != null) {
-                        Logger.info("Found libraries.json: " + properFileName);
-                        try (Reader reader = new InputStreamReader(jarFile.getInputStream(libZip))) {
-                            Gson gson = new GsonBuilder().create();
-                            JsonLibraries libraries = gson.fromJson(reader, JsonLibraries.class);
-                            Logger.info("Loading libraries.json: " + properFileName);
-                            LibraryProcessor.downloadLibrary(properFileName + " libraries", null, libraries.getLibs(), registerJar);
+        if (Constants.MIXINS_PATH.toFile().exists()) {
+            File[] mixinFiles = Constants.MIXINS_PATH.toFile().listFiles();
+            if (mixinFiles != null) {
+                for (File file : mixinFiles) {
+                    // Skip folders
+                    if (!file.isFile()) continue;
+                    // Make sure that it ends with .jar
+                    if (!file.getName().endsWith(".jar")) continue;
+                    // Since it is a file, and it ends with .jar, we can proceed with attempting to load it.
+                    String properFileName = file.getName().substring(0, file.getName().length() - 4);
+                    try {
+                        // Get jar file
+                        JarFile jarFile = new JarFile(file);
+                        // Load libraries from json
+                        ZipEntry libZip = jarFile.getEntry("libraries.json");
+                        if (libZip != null) {
+                            Logger.info("Found libraries.json: " + properFileName);
+                            try (Reader reader = new InputStreamReader(jarFile.getInputStream(libZip))) {
+                                Gson gson = new GsonBuilder().create();
+                                JsonLibraries libraries = gson.fromJson(reader, JsonLibraries.class);
+                                Logger.info("Loading libraries.json: " + properFileName);
+                                LibraryProcessor.downloadLibrary(properFileName + " libraries", null, libraries.getLibs(), registerJar);
+                            }
                         }
+                        // Find all mixins for a jar.
+                        List<String> mixinsJson = findMixinEntry(jarFile);
+                        if (!mixinsJson.isEmpty()) {
+                            MIXINS.addAll(mixinsJson);
+                        }
+                        // Add to class loader
+                        PATHS.add(file.toPath());
+                    } catch (IOException e) {
+                        Logger.fatal("Error loading mixin (" + properFileName + ")");
+                        e.printStackTrace();
+                        System.exit(0);
                     }
-                    // Find all mixins for a jar.
-                    List<String> mixinsJson = findMixinEntry(jarFile);
-                    if (!mixinsJson.isEmpty()) {
-                        MIXINS.addAll(mixinsJson);
-                    }
-                    // Add to class loader
-                    PATHS.add(file.toPath());
-                } catch (IOException e) {
-                    Logger.fatal("Error loading mixin (" + properFileName + ")");
-                    e.printStackTrace();
-                    System.exit(0);
+                    Logger.info("Loaded mixin: " + properFileName);
                 }
-                Logger.info("Loaded mixin: " + properFileName);
             }
         }
         // Start modlauncher

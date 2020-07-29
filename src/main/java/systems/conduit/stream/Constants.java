@@ -7,8 +7,12 @@ import java.nio.file.Paths;
 public class Constants {
 
     // Default versions. Will changed down the line by the launcher or gradle.
-    public static String MINECRAFT_VERSION = "1.14.4";
-    public static String CONDUIT_VERSION = "0.0.3";
+    public static String MINECRAFT_VERSION = "1.16.1";
+    public static String CONDUIT_VERSION = "0.0.5";
+    // TODO: Replace version with our gradle.properties one
+    public static String STREAM_VERSION = "1.0.1";
+
+    public static boolean DEBUG = false;
 
     public static final String LOGGER_NAME = "Launcher";
 
@@ -40,10 +44,14 @@ public class Constants {
 
     public static final String LOMBOK_DEPENDENCY = "org.projectlombok:lombok:1.18.10";
     public static final String CONDUIT_DEPENDENCY = "systems.conduit:Conduit:";
+    public static final String STREAM_DEPENDENCY = "systems.conduit:Stream:";
     public static final String GRADLE_CONFIGURATION_ANNOTATION = "annotationProcessor";
     public static final String GRADLE_CONFIGURATION_API = "api";
 
     public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11";
+
+    public static final String MAIN_SERVER_FILE = "net.minecraft.server.Main";
+    public static final String MAIN_CONDUIT_FILE = "systems.conduit.main.Conduit";
 
     public static void setMinecraftPaths(Path basePath, String minecraftVersion) {
         MINECRAFT_VERSION = minecraftVersion;

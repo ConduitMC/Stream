@@ -12,6 +12,6 @@ public class MinecraftLibrary {
     private List<MinecraftRule> rules = new ArrayList<>();
 
     public boolean isMac() {
-        return rules.stream().anyMatch(MinecraftRule::isMac);
+        return rules != null && rules.stream().anyMatch(MinecraftRule::isMac);
     }
 }

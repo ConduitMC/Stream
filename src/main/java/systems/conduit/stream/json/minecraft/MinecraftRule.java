@@ -9,6 +9,6 @@ public class MinecraftRule {
     private MinecraftOS os = new MinecraftOS();
 
     protected boolean isMac() {
-        return action.equals("allow") && os != null && os.getName().equals("osx");
+        return action != null && action.equals("allow") && os != null && os.getName().equals("osx");
     }
 }

@@ -34,16 +34,17 @@ public class StreamGradlePlugin implements Plugin<Project> {
             }
             // Get java convention and register java version if wanted
             JavaPluginConvention java = (JavaPluginConvention) project.getConvention().getPlugins().get("java");
-            if (extension.getJava().isPresent()) {
-                java.setSourceCompatibility(extension.getJava().get());
-                java.setTargetCompatibility(extension.getJava().get());
+            if (extension.java != null) {
+                java.setSourceCompatibility(extension.java);
+                java.setTargetCompatibility(extension.java);
             }
             // Conduit dependency if wanted
-            if (extension.getVersion().isPresent()) {
-                Logger.info("Loading Conduit: " + extension.getVersion().get());
-                project.getDependencies().add(Constants.GRADLE_CONFIGURATION_API, Constants.CONDUIT_DEPENDENCY + extension.getVersion().get());
+            if (extension.version != null) {
+                Logger.info("Loading Conduit: " + extension.version);
+                project.getDependencies().add(Constants.GRADLE_CONFIGURATION_API, Constants.CONDUIT_DEPENDENCY + extension.version);
                 Logger.info("Loaded Conduit");
             }
+            project.getDependencies().add(Constants.GRADLE_CONFIGURATION_API, Constants.STREAM_DEPENDENCY + Constants.STREAM_VERSION);
             // Register our dependencies to gradle
             final Callback<File> registerDependency = jar -> {
                 try {
@@ -61,9 +62,9 @@ public class StreamGradlePlugin implements Plugin<Project> {
             // Download default libraries
             SharedLaunch.downloadDefaultLibraries(cacheFolder, registerDependency);
             // Make sure minecraft is present. It always should be if done right.
-            if (extension.getMinecraft().isPresent()) {
+            if (extension.minecraft != null) {
                 // Download/load minecraft libraries and download and remap minecraft if need to
-                SharedLaunch.setupMinecraft(cacheFolder, extension.getMinecraft().get(), registerDependency);
+                SharedLaunch.setupMinecraft(cacheFolder, extension.minecraft, registerDependency);
                 // Load minecraft
                 registerDependency.callback(Constants.SERVER_MAPPED_JAR_PATH.toFile());
             }

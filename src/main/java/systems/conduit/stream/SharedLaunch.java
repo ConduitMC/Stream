@@ -31,8 +31,8 @@ public class SharedLaunch {
         LibraryProcessor.resetArtifacts();
         // Load logger libraries
         LibraryProcessor.downloadLibrary("logger libraries", basePath, Arrays.asList(
-                new JsonLibraryInfo("maven", "org.apache.logging.log4j", "log4j-api", "2.8.1", ""),
-                new JsonLibraryInfo("maven", "org.apache.logging.log4j", "log4j-core", "2.8.1", "")
+                new JsonLibraryInfo("maven", "org.apache.logging.log4j", "log4j-api", "2.11.2", ""),
+                new JsonLibraryInfo("maven", "org.apache.logging.log4j", "log4j-core", "2.11.2", "")
         ), callback);
         // Load json library
         LibraryProcessor.downloadLibrary("json library", basePath, Collections.singletonList(
@@ -56,6 +56,10 @@ public class SharedLaunch {
     }
 
     public static void setupMinecraft(Path basePath, String version, Callback<File> callback) {
+        if (version == null) {
+            Logger.fatal("Can not find minecraft version");
+            System.exit(0);
+        }
         // Set correct paths
         Constants.setMinecraftPaths(basePath, version);
         // Make sure we have the correct directories
