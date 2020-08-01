@@ -44,8 +44,7 @@ public class LibraryProcessor {
                 loadedLibrariesIds.add(library.getArtifactId());
                 callback.callback(jar);
             } catch (Exception e) {
-                Logger.fatal("Error loading " + type + ": " + library.getArtifactId());
-                e.printStackTrace();
+                Logger.exception("Error loading " + type + ": " + library.getArtifactId(), e);
                 System.exit(0);
             }
 

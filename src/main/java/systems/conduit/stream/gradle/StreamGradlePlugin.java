@@ -52,8 +52,7 @@ public class StreamGradlePlugin implements Plugin<Project> {
                     Dependency dependency = project.getDependencies().create(project.files(jar.toURI().toURL()));
                     project.getDependencies().add(Constants.GRADLE_CONFIGURATION_API, dependency);
                 } catch (MalformedURLException e) {
-                    Logger.fatal("Error adding " + jar.getPath());
-                    e.printStackTrace();
+                    Logger.exception("Error adding " + jar.getPath(), e);
                     System.exit(0);
                 }
             };

@@ -22,6 +22,15 @@ public class Logger {
         }
     }
 
+    public static void exception(String error, Exception e) {
+        if (shouldUseLogger && canUseLogger()) {
+            LogManager.getLogger(Constants.LOGGER_NAME).fatal(error, e);
+        } else {
+            System.out.println(error);
+            System.out.println(e.getMessage());
+        }
+    }
+
     private static boolean canUseLogger() {
         try {
             Class.forName("org.apache.logging.log4j.core.Logger");

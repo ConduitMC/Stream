@@ -18,8 +18,7 @@ public class Mojang2Tsrg {
             writeTsrg(map.toFile(), out.toFile());
             map.toFile().delete();
         } catch (IOException e) {
-            Logger.fatal("Error converting Minecraft server mappings");
-            e.printStackTrace();
+            Logger.exception("Error converting Minecraft server mappings", e);
             System.exit(0);
         }
     }

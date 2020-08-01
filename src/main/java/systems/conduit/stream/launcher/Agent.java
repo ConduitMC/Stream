@@ -30,7 +30,7 @@ public class Agent {
             }
         } catch (Throwable e) {
             System.out.println("Add to classpath error!");
-            e.printStackTrace();
+            System.out.println(e.getMessage());
             System.exit(0);
         }
     }

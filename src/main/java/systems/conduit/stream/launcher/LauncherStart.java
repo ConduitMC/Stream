@@ -40,8 +40,7 @@ public class LauncherStart {
             try (InputStream inputStream = SharedLaunch.class.getResourceAsStream("/" + Constants.STREAM_JSON)) {
                 Files.copy(inputStream, Constants.STREAM_JSON_PATH, StandardCopyOption.REPLACE_EXISTING);
             } catch (IOException e) {
-                Logger.fatal("Error copying Stream json");
-                e.printStackTrace();
+                Logger.exception("Error copying Stream json", e);
                 System.exit(0);
             }
         }
@@ -52,8 +51,7 @@ public class LauncherStart {
                 Gson gson = new GsonBuilder().create();
                 stream = gson.fromJson(reader, JsonStream.class);
             } catch (IOException e) {
-                Logger.fatal("Error reading Stream json");
-                e.printStackTrace();
+                Logger.exception("Error reading Stream json", e);
                 System.exit(0);
             }
         }
@@ -89,8 +87,7 @@ public class LauncherStart {
                     try {
                         SharedLaunch.downloadFile(new URL(Constants.CONDUIT_DOWNLOAD_PATH), Constants.CONDUIT_MIXIN_PATH.toFile());
                     } catch (IOException e) {
-                        Logger.fatal("Unable to download Conduit!");
-                        e.printStackTrace();
+                        Logger.exception("Unable to download Conduit!", e);
                         // Don't exit here. Possibly they have old conduit version already.
                     }
                 }
@@ -129,8 +126,7 @@ public class LauncherStart {
                         // Add to class loader
                         PATHS.add(file.toPath());
                     } catch (IOException e) {
-                        Logger.fatal("Error loading mixin (" + properFileName + ")");
-                        e.printStackTrace();
+                        Logger.exception("Error loading mixin (" + properFileName + ")", e);
                         System.exit(0);
                     }
                     Logger.info("Loaded mixin: " + properFileName);

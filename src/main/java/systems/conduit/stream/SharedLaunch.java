@@ -47,8 +47,7 @@ public class SharedLaunch {
             Gson gson = new GsonBuilder().create();
             defaults = gson.fromJson(reader, JsonLibraries.class);
         } catch (IOException e) {
-            Logger.fatal("Error reading default libraries json");
-            e.printStackTrace();
+            Logger.exception("Error reading default libraries json", e);
             System.exit(0);
         }
         // Download all the default libraries
@@ -78,8 +77,7 @@ public class SharedLaunch {
                         Logger.info("Downloading version json");
                         downloadFile(new URL(versionInfo.get().getUrl()), Constants.VERSION_JSON_PATH.toFile());
                     } catch (IOException e) {
-                        Logger.fatal("Error creating version json url");
-                        e.printStackTrace();
+                        Logger.exception("Error creating version json url", e);
                         System.exit(0);
                     }
                 } else {
@@ -87,8 +85,7 @@ public class SharedLaunch {
                     System.exit(0);
                 }
             } catch (IOException e) {
-                Logger.fatal("Error reading Minecraft manifest url");
-                e.printStackTrace();
+                Logger.exception("Error reading Minecraft manifest url", e);
                 System.exit(0);
             }
         }
@@ -98,8 +95,7 @@ public class SharedLaunch {
             Gson gson = new GsonBuilder().create();
             minecraftVersion = gson.fromJson(reader, MinecraftVersion.class);
         } catch (IOException e) {
-            Logger.fatal("Error reading Minecraft version json");
-            e.printStackTrace();
+            Logger.exception("Error reading Minecraft version json", e);
             System.exit(0);
         }
         if (minecraftVersion == null) {
@@ -125,8 +121,7 @@ public class SharedLaunch {
                     Logger.info("Downloading Minecraft server (" + Constants.MINECRAFT_VERSION + ")");
                     downloadFile(new URL(minecraftVersion.getDownloads().getServer().getUrl()), Constants.SERVER_JAR_PATH.toFile());
                 } catch (IOException e) {
-                    Logger.fatal("Error creating server url");
-                    e.printStackTrace();
+                    Logger.exception("Error creating server url", e);
                     System.exit(0);
                 }
             } else {
@@ -143,8 +138,7 @@ public class SharedLaunch {
                     Logger.info("Downloading server mappings");
                     downloadFile(new URL(minecraftVersion.getDownloads().getServerMappings().getUrl()), Constants.SERVER_MAPPINGS_PATH.toFile());
                 } catch (IOException e) {
-                    Logger.fatal("Error creating server mappings url");
-                    e.printStackTrace();
+                    Logger.exception("Error creating server mappings url", e);
                     System.exit(0);
                 }
             } else {
@@ -163,13 +157,13 @@ public class SharedLaunch {
                     "--srg-in", Constants.SERVER_MAPPINGS_CONVERTED_PATH.toFile().getAbsolutePath(),
                     "--quiet"
             ).toArray(String[]::new);
+            // Run remapping Minecraft
             try {
                 Class<?> cls = Class.forName("net.md_5.specialsource.SpecialSource", true, classLoader);
                 Method method = cls.getMethod("main", String[].class);
                 method.invoke(null, (Object) specialSourceArgs);
             } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | ClassNotFoundException e) {
-                Logger.fatal("Error remapping Minecraft");
-                e.printStackTrace();
+                Logger.exception("Error remapping Minecraft", e);
                 System.exit(0);
             }
             Constants.SERVER_JAR_PATH.toFile().delete();
@@ -194,7 +188,7 @@ public class SharedLaunch {
                 delete(trash);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.exception("Error cleaning up Minecraft jar", e);
         }
     }
 
