@@ -9,8 +9,7 @@ public class Constants {
     // Default versions. Will changed down the line by the launcher or gradle.
     public static String MINECRAFT_VERSION = "1.16.1";
     public static String CONDUIT_VERSION = "0.0.5";
-    // TODO: Replace version with our gradle.properties one
-    public static String STREAM_VERSION = "1.0.1";
+    public static String STREAM_VERSION = "@VERSION@";
 
     public static boolean DEBUG = false;
 

@@ -1,3 +1,5 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
 plugins {
     id "checkstyle"
     id "java"
@@ -41,6 +43,17 @@ checkstyle {
 }
 
 task install(dependsOn: [publishToMavenLocal])
+
+task processSource(type: Sync) {
+    from sourceSets.main.java
+    inputs.property "version", version
+    filter(ReplaceTokens, tokens: [VERSION: version])
+    into "$buildDir/src"
+}
+
+compileJava {
+    source = processSource.outputs
+}
 
 jar {
     manifest {
