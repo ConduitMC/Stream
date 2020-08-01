@@ -75,6 +75,13 @@
       "artifactId": "mixin",
       "version": "0.8",
       "url": "https://repo.conduit.systems/repository/releases/"
+    },
+    {
+      "type": "maven",
+      "groupId": "net.minecraftforge",
+      "artifactId": "forgeflower",
+      "version": "1.5.478.15",
+      "url": "https://files.minecraftforge.net/maven/"
     }
   ]
 }

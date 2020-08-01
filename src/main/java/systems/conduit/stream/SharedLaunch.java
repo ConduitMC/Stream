@@ -170,6 +170,23 @@ public class SharedLaunch {
             Constants.SERVER_MAPPINGS_CONVERTED_PATH.toFile().delete();
             Logger.info("Remapped Minecraft");
         }
+        // Decompile Minecraft
+        if (!Constants.SERVER_DECOMPILED_JAR_PATH.toFile().exists()) {
+            ClassLoader classLoader = new URLClassLoader(specialSourcePaths.toArray(new URL[]{}), ClassLoader.getSystemClassLoader());
+            String[] decompileArgs = Stream.of(
+                    "-udv=false",
+                    Constants.SERVER_MAPPED_JAR_PATH.toFile().getAbsolutePath(),
+                    Constants.SERVER_DECOMPILED_JAR_PATH.toFile().getAbsolutePath()
+            ).toArray(String[]::new);
+            try {
+                Class<?> cls = Class.forName("org.jetbrains.java.decompiler.main.decompiler.ConsoleDecompiler", true, classLoader);
+                Method method = cls.getMethod("main", String[].class);
+                method.invoke(null, (Object) decompileArgs);
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | ClassNotFoundException e) {
+                Logger.exception("Error decompiling Minecraft", e);
+                System.exit(0);
+            }
+        }
     }
 
     private static Optional<MinecraftVersionManifestType> getVersion(MinecraftVersionManifest manifest, String version) {

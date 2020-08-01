@@ -66,6 +66,7 @@ public class StreamGradlePlugin implements Plugin<Project> {
                 SharedLaunch.setupMinecraft(cacheFolder, extension.minecraft, registerDependency);
                 // Load minecraft
                 registerDependency.callback(Constants.SERVER_MAPPED_JAR_PATH.toFile());
+                registerDependency.callback(Constants.SERVER_DECOMPILED_JAR_PATH.toFile());
             }
         });
     }

@@ -26,6 +26,7 @@ dependencies {
     implementation "org.apache.logging.log4j:log4j-api:2.11.2"
     implementation "org.apache.logging.log4j:log4j-core:2.11.2"
     compileOnly "net.md-5:SpecialSource:1.8.6"
+    compileOnly "net.minecraftforge:forgeflower:1.5.478.15"
     compileOnly "cpw.mods:modlauncher:6.1.1"
     compileOnly "org.spongepowered:mixin:0.8"
 }

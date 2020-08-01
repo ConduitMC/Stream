@@ -30,6 +30,7 @@ public class Constants {
     public static Path SERVER_MAPPED_JAR_PATH;
     public static Path SERVER_MAPPINGS_PATH;
     public static Path SERVER_MAPPINGS_CONVERTED_PATH;
+    public static Path SERVER_DECOMPILED_JAR_PATH;
 
     public static final Path MIXINS_PATH = Paths.get(".mixins");
     public static Path CONDUIT_MIXIN_PATH;
@@ -60,6 +61,7 @@ public class Constants {
         SERVER_MAPPED_JAR_PATH = MINECRAFT_PATH.resolve("server-" + MINECRAFT_VERSION + "-remapped.jar");
         SERVER_MAPPINGS_PATH = MINECRAFT_PATH.resolve("server-" + MINECRAFT_VERSION + "-mappings.txt");
         SERVER_MAPPINGS_CONVERTED_PATH =  MINECRAFT_PATH.resolve("server-" + MINECRAFT_VERSION + "-mappings-converted.txt");
+        SERVER_DECOMPILED_JAR_PATH = MINECRAFT_PATH.resolve("server-" + MINECRAFT_VERSION + "-decompiled.jar");
     }
 
     public static void setConduitPaths(String conduitVersion) {
