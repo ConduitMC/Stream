@@ -212,12 +212,16 @@ public class SharedLaunch {
     }
 
     public static void downloadFile(URL url, File location) throws IOException {
+        try (InputStream inputStream = getConnection(url)) {
+            Files.copy(inputStream, location.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        }
+    }
+
+    private static InputStream getConnection(URL url) throws IOException {
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.addRequestProperty("User-Agent", Constants.USER_AGENT);
         connection.setRequestMethod("GET");
         connection.connect();
-        try (InputStream inputStream = connection.getInputStream()) {
-            Files.copy(inputStream, location.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        }
+        return connection.getInputStream();
     }
 }

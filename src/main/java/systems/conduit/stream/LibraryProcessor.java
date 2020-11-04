@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 public class LibraryProcessor {
 
@@ -21,35 +22,52 @@ public class LibraryProcessor {
     public static void downloadLibrary(String type, Path basePath, List<JsonLibraryInfo> libraries, Callback<File> callback) {
         Logger.info("Loading " + type);
         List<String> loadedLibrariesIds = new ArrayList<>();
+        List<File> loadedLibrariesFiles = new ArrayList<>();
+        CountDownLatch latch = new CountDownLatch(libraries.size());
         for (JsonLibraryInfo library : libraries) {
-            if (loadedArtifacts.contains(library.getGroupId() + ":" + library.getArtifactId())) continue;
-            File libraryPath;
-            if (basePath != null) {
-                libraryPath = new File(basePath.toFile() + File.separator + Constants.LIBRARIES_PATH.toFile() + File.separator + getPath(library));
-            } else {
-                libraryPath = new File(Constants.LIBRARIES_PATH.toFile() + File.separator + getPath(library));
+            if (loadedArtifacts.contains(library.getGroupId() + ":" + library.getArtifactId())) {
+                latch.countDown();
+                continue;
             }
-            try {
-                Files.createDirectories(libraryPath.toPath());
-                File jar = new File(libraryPath, getFileName(library));
-                if (!jar.exists() && library.getType() != null) {
-                    Logger.info("Downloading " + type + ": " + library.getArtifactId());
-                    if (library.getType().trim().equalsIgnoreCase("maven")) {
-                        SharedLaunch.downloadFile(getUrl(library), jar);
-                    } else if (!library.getType().trim().equalsIgnoreCase("minecraft")) {
-                        SharedLaunch.downloadFile(new URL(library.getUrl()), jar);
-                    }
+            loadedArtifacts.add(library.getGroupId() + ":" + library.getArtifactId());
+            new Thread(() -> {
+                File libraryPath;
+                if (basePath != null) {
+                    libraryPath = new File(basePath.toFile() + File.separator + Constants.LIBRARIES_PATH.toFile() + File.separator + getPath(library));
+                } else {
+                    libraryPath = new File(Constants.LIBRARIES_PATH.toFile() + File.separator + getPath(library));
                 }
-                loadedArtifacts.add(library.getGroupId() + ":" + library.getArtifactId());
-                loadedLibrariesIds.add(library.getArtifactId());
-                callback.callback(jar);
-            } catch (Exception e) {
-                Logger.exception("Error loading " + type + ": " + library.getArtifactId(), e);
-                System.exit(0);
-            }
-
+                try {
+                    Files.createDirectories(libraryPath.toPath());
+                    File jar = new File(libraryPath, getFileName(library));
+                    if (!jar.exists() && library.getType() != null) {
+                        Logger.info("Downloading " + type + ": " + library.getArtifactId());
+                        if (library.getType().trim().equalsIgnoreCase("maven")) {
+                            SharedLaunch.downloadFile(getUrl(library), jar);
+                        } else if (!library.getType().trim().equalsIgnoreCase("minecraft")) {
+                            SharedLaunch.downloadFile(new URL(library.getUrl()), jar);
+                        }
+                    }
+                    loadedLibrariesIds.add(library.getArtifactId());
+                    loadedLibrariesFiles.add(jar);
+                } catch (Exception e) {
+                    Logger.exception("Error loading " + type + ": " + library.getArtifactId(), e);
+                    System.exit(0);
+                } finally {
+                    latch.countDown();
+                }
+            }).start();
         }
-        if (!loadedLibrariesIds.isEmpty()) Logger.info("Loaded " + type + ": " + loadedLibrariesIds);
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            Logger.fatal("Error loading libraries");
+            System.exit(0);
+        }
+        if (!loadedLibrariesIds.isEmpty()) {
+            loadedLibrariesFiles.forEach(callback::callback);
+            Logger.info("Loaded " + type + ": " + loadedLibrariesIds);
+        }
     }
 
     private static URL getUrl(JsonLibraryInfo library) throws MalformedURLException {
