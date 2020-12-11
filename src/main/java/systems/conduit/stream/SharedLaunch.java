@@ -54,13 +54,13 @@ public class SharedLaunch {
         LibraryProcessor.downloadLibrary("default libraries", basePath, defaults.getLibs(), callback);
     }
 
-    public static void setupMinecraft(Path basePath, String version, Callback<File> callback) {
+    public static void setupMinecraft(Constants.Side side, Path basePath, String version, Callback<File> callback) {
         if (version == null) {
             Logger.fatal("Can not find minecraft version");
             System.exit(0);
         }
         // Set correct paths
-        Constants.setMinecraftPaths(basePath, version);
+        Constants.setMinecraftPaths(side, basePath, version);
         // Make sure we have the correct directories
         if (!Constants.MINECRAFT_PATH.toFile().exists() && !Constants.MINECRAFT_PATH.toFile().mkdirs()) {
             Logger.fatal("Failed to make minecraft directory");
@@ -71,7 +71,7 @@ public class SharedLaunch {
             try (InputStreamReader manifestReader = new InputStreamReader(new URL(Constants.VERSION_MANIFEST_ENDPOINT).openStream())) {
                 MinecraftVersionManifest manifest = new Gson().fromJson(manifestReader, MinecraftVersionManifest.class);
                 Optional<MinecraftVersionManifestType> versionInfo = getVersion(manifest, Constants.MINECRAFT_VERSION);
-                // Read version json and get server info
+                // Read version json and get info
                 if (versionInfo.isPresent() && versionInfo.get().getUrl() != null && !versionInfo.get().getUrl().isEmpty()) {
                     try {
                         Logger.info("Downloading version json");
@@ -105,7 +105,7 @@ public class SharedLaunch {
         // Download libraries
         List<JsonLibraryInfo> minecraftLibraries = new ArrayList<>();
         for (MinecraftLibrary minecraftLibrary : minecraftVersion.getLibraries()) {
-            // Should not need mac only for a server. I think?
+            // Should not need mac only. I think?
             if (!minecraftLibrary.isMac()) {
                 String[] minecraftLib = minecraftLibrary.getName().split(":");
                 minecraftLibraries.add(new JsonLibraryInfo("maven", minecraftLib[0], minecraftLib[1], minecraftLib[2], Constants.MINECRAFT_REPO));
@@ -114,47 +114,49 @@ public class SharedLaunch {
         // Download all the Minecraft libraries
         LibraryProcessor.downloadLibrary("Minecraft libraries", basePath, minecraftLibraries, callback);
         // Download Minecraft and patch if we don't have the file
-        if (!Constants.SERVER_MAPPED_JAR_PATH.toFile().exists()) {
-            // Download server
-            if (!minecraftVersion.getDownloads().getServer().getUrl().isEmpty()) {
+        if (!Constants.MAPPED_JAR_PATH.toFile().exists()) {
+            // Download jar
+            String jarDownload = side == Constants.Side.SERVER ? minecraftVersion.getDownloads().getServer().getUrl() : minecraftVersion.getDownloads().getClient().getUrl();
+            if (!jarDownload.isEmpty()) {
                 try {
-                    Logger.info("Downloading Minecraft server (" + Constants.MINECRAFT_VERSION + ")");
-                    downloadFile(new URL(minecraftVersion.getDownloads().getServer().getUrl()), Constants.SERVER_JAR_PATH.toFile());
+                    Logger.info("Downloading Minecraft " + side.name().toLowerCase() + " (" + Constants.MINECRAFT_VERSION + ")");
+                    downloadFile(new URL(jarDownload), Constants.JAR_PATH.toFile());
                 } catch (IOException e) {
-                    Logger.exception("Error creating server url", e);
+                    Logger.exception("Error creating " + side.name().toLowerCase() + " url", e);
                     System.exit(0);
                 }
             } else {
-                Logger.fatal("Error reading Minecraft server url");
+                Logger.fatal("Error reading Minecraft " + side.name().toLowerCase() + " url");
                 System.exit(0);
             }
             // Cleanup Minecraft
             Logger.info("Cleaning up Minecraft");
-            deleteMinecraftTrash(Constants.SERVER_JAR_PATH.toFile());
+            //deleteMinecraftTrash(Constants.JAR_PATH.toFile());
             Logger.info("Cleaned up Minecraft");
-            // Download server mappings
-            if (!minecraftVersion.getDownloads().getServerMappings().getUrl().isEmpty()) {
+            // Download mappings
+            String mappingsDownload = side == Constants.Side.SERVER ? minecraftVersion.getDownloads().getServerMappings().getUrl() : minecraftVersion.getDownloads().getClientMappings().getUrl();
+            if (!mappingsDownload.isEmpty()) {
                 try {
-                    Logger.info("Downloading server mappings");
-                    downloadFile(new URL(minecraftVersion.getDownloads().getServerMappings().getUrl()), Constants.SERVER_MAPPINGS_PATH.toFile());
+                    Logger.info("Downloading " + side.name().toLowerCase() + " mappings");
+                    downloadFile(new URL(mappingsDownload), Constants.MAPPINGS_PATH.toFile());
                 } catch (IOException e) {
-                    Logger.exception("Error creating server mappings url", e);
+                    Logger.exception("Error creating " + side.name().toLowerCase() + " mappings url", e);
                     System.exit(0);
                 }
             } else {
-                Logger.fatal("Error reading Minecraft server mappings url");
+                Logger.fatal("Error reading Minecraft " + side.name().toLowerCase() + " mappings url");
                 System.exit(0);
             }
             // Convert Minecraft mappings
             Logger.info("Converting Minecraft mappings");
-            new Mojang2Tsrg(Constants.SERVER_MAPPINGS_PATH, Constants.SERVER_MAPPINGS_CONVERTED_PATH);
+            new Mojang2Tsrg(Constants.MAPPINGS_PATH, Constants.MAPPINGS_CONVERTED_PATH);
             // Remapping Minecraft
-            Logger.info("Remapping Minecraft (This might take a bit)");
+            Logger.info("Remapping Minecraft " + side.name().toLowerCase() + " (This might take a bit)");
             ClassLoader classLoader = new URLClassLoader(specialSourcePaths.toArray(new URL[]{}), ClassLoader.getSystemClassLoader());
             String[] specialSourceArgs = Stream.of(
-                    "--in-jar", Constants.SERVER_JAR_PATH.toFile().getAbsolutePath(),
-                    "--out-jar", Constants.SERVER_MAPPED_JAR_PATH.toFile().getAbsolutePath(),
-                    "--srg-in", Constants.SERVER_MAPPINGS_CONVERTED_PATH.toFile().getAbsolutePath(),
+                    "--in-jar", Constants.JAR_PATH.toFile().getAbsolutePath(),
+                    "--out-jar", Constants.MAPPED_JAR_PATH.toFile().getAbsolutePath(),
+                    "--srg-in", Constants.MAPPINGS_CONVERTED_PATH.toFile().getAbsolutePath(),
                     "--quiet"
             ).toArray(String[]::new);
             // Run remapping Minecraft
@@ -164,10 +166,11 @@ public class SharedLaunch {
                 method.invoke(null, (Object) specialSourceArgs);
             } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | ClassNotFoundException e) {
                 Logger.exception("Error remapping Minecraft", e);
+                e.printStackTrace();
                 System.exit(0);
             }
-            Constants.SERVER_JAR_PATH.toFile().delete();
-            Constants.SERVER_MAPPINGS_CONVERTED_PATH.toFile().delete();
+            Constants.JAR_PATH.toFile().delete();
+            Constants.MAPPINGS_CONVERTED_PATH.toFile().delete();
             Logger.info("Remapped Minecraft");
         }
     }

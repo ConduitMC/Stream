@@ -20,6 +20,8 @@ public class StreamGradlePlugin implements Plugin<Project> {
 
     @Override
     public void apply(Project project) {
+        // TODO: ADD CONFIG
+        Constants.Side side = Constants.Side.SERVER;
         // Register Conduit info
         ConduitExtension extension = project.getExtensions().create("conduit", ConduitExtension.class, project);
         // Project Defaults
@@ -63,9 +65,9 @@ public class StreamGradlePlugin implements Plugin<Project> {
             // Make sure minecraft is present. It always should be if done right.
             if (extension.minecraft != null) {
                 // Download/load minecraft libraries and download and remap minecraft if need to
-                SharedLaunch.setupMinecraft(cacheFolder, extension.minecraft, registerDependency);
+                SharedLaunch.setupMinecraft(side, cacheFolder, extension.minecraft, registerDependency);
                 // Load minecraft
-                registerDependency.callback(Constants.SERVER_MAPPED_JAR_PATH.toFile());
+                registerDependency.callback(Constants.MAPPED_JAR_PATH.toFile());
             }
         });
     }

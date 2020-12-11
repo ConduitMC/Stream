@@ -4,8 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import cpw.mods.modlauncher.Launcher;
 import systems.conduit.stream.*;
-import systems.conduit.stream.json.download.JsonLibraries;
 import systems.conduit.stream.json.JsonStream;
+import systems.conduit.stream.json.download.JsonLibraries;
 
 import java.io.*;
 import java.net.URL;
@@ -26,6 +26,9 @@ public class LauncherStart {
     public static final List<Path> PATHS = new ArrayList<>();
 
     public static void main(String... args) {
+        // TODO MAKE CONFIG
+        Constants.Side side = Constants.Side.SERVER;
+        // Defaults
         System.setProperty("http.agent", Constants.USER_AGENT);
         Logger.shouldUseLogger = true;
         System.out.println("Starting launcher...");
@@ -59,19 +62,19 @@ public class LauncherStart {
         Logger.info("Setting up Minecraft");
         if (!Constants.DEBUG) {
             if (stream != null) {
-                SharedLaunch.setupMinecraft(null, stream.getMinecraft().getVersion(), registerJar);
+                SharedLaunch.setupMinecraft(side, null, stream.getMinecraft().getVersion(), registerJar);
             } else {
                 Logger.fatal("Error parsing stream json!");
                 System.exit(0);
             }
         } else {
-            SharedLaunch.setupMinecraft(null, Constants.MINECRAFT_VERSION, registerJar);
+            SharedLaunch.setupMinecraft(side, null, Constants.MINECRAFT_VERSION, registerJar);
         }
         Logger.info("Set up Minecraft");
         // Load minecraft
         if (!Constants.DEBUG) {
             Logger.info("Loading Minecraft remapped");
-            LauncherStart.PATHS.add(Constants.SERVER_MAPPED_JAR_PATH);
+            LauncherStart.PATHS.add(Constants.MAPPED_JAR_PATH);
             Logger.info("Loaded Minecraft remapped");
         }
         // Create the mixins folder
@@ -135,7 +138,7 @@ public class LauncherStart {
         }
         // Start modlauncher
         Logger.info("Starting modlauncher...");
-        Launcher.main(Stream.concat(Stream.of("--launchTarget", "minecraft-server"), Arrays.stream(args)).toArray(String[]::new));
+        Launcher.main(Stream.concat(Stream.of("--launchTarget", "minecraft-" + side.name().toLowerCase()), Arrays.stream(args)).toArray(String[]::new));
     }
 
     private static List<String> findMixinEntry(JarFile file) {

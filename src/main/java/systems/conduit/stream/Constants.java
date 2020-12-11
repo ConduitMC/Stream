@@ -23,13 +23,14 @@ public class Constants {
     public static final Path CONDUIT_CACHE = Paths.get("caches", "conduit");
     public static Path MINECRAFT_PATH = Paths.get(".minecraft");
 
-    public static final Path LIBRARIES_PATH = Paths.get(".libs");
+    // TODO: Detect side and use .libs for server
+    public static final Path LIBRARIES_PATH = Paths.get("libraries");
 
     public static Path VERSION_JSON_PATH;
-    public static Path SERVER_JAR_PATH;
-    public static Path SERVER_MAPPED_JAR_PATH;
-    public static Path SERVER_MAPPINGS_PATH;
-    public static Path SERVER_MAPPINGS_CONVERTED_PATH;
+    public static Path JAR_PATH;
+    public static Path MAPPED_JAR_PATH;
+    public static Path MAPPINGS_PATH;
+    public static Path MAPPINGS_CONVERTED_PATH;
 
     public static final Path MIXINS_PATH = Paths.get(".mixins");
     public static Path CONDUIT_MIXIN_PATH;
@@ -50,21 +51,27 @@ public class Constants {
     public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11";
 
     public static final String MAIN_SERVER_FILE = "net.minecraft.server.Main";
+    public static final String MAIN_CLIENT_FILE = "net.minecraft.client.main.Main";
     public static final String MAIN_CONDUIT_FILE = "systems.conduit.main.Conduit";
 
-    public static void setMinecraftPaths(Path basePath, String minecraftVersion) {
+    public static void setMinecraftPaths(Side side, Path basePath, String minecraftVersion) {
         MINECRAFT_VERSION = minecraftVersion;
         if (basePath != null) MINECRAFT_PATH = basePath.resolve(MINECRAFT_PATH);
         VERSION_JSON_PATH = MINECRAFT_PATH.resolve(MINECRAFT_VERSION + ".json");
-        SERVER_JAR_PATH = MINECRAFT_PATH.resolve("server-" + MINECRAFT_VERSION + ".jar");
-        SERVER_MAPPED_JAR_PATH = MINECRAFT_PATH.resolve("server-" + MINECRAFT_VERSION + "-remapped.jar");
-        SERVER_MAPPINGS_PATH = MINECRAFT_PATH.resolve("server-" + MINECRAFT_VERSION + "-mappings.txt");
-        SERVER_MAPPINGS_CONVERTED_PATH =  MINECRAFT_PATH.resolve("server-" + MINECRAFT_VERSION + "-mappings-converted.txt");
+        JAR_PATH = MINECRAFT_PATH.resolve(side.name().toLowerCase() + "-" + MINECRAFT_VERSION + ".jar");
+        MAPPED_JAR_PATH = MINECRAFT_PATH.resolve(side.name().toLowerCase() + "-" + MINECRAFT_VERSION + "-remapped.jar");
+        MAPPINGS_PATH = MINECRAFT_PATH.resolve(side.name().toLowerCase() + "-" + MINECRAFT_VERSION + "-mappings.txt");
+        MAPPINGS_CONVERTED_PATH =  MINECRAFT_PATH.resolve(side.name().toLowerCase() + "-" + MINECRAFT_VERSION + "-mappings-converted.txt");
     }
 
     public static void setConduitPaths(String conduitVersion) {
         CONDUIT_VERSION = conduitVersion;
         CONDUIT_MIXIN_PATH = MIXINS_PATH.resolve("Conduit-" + CONDUIT_VERSION + ".jar");
         CONDUIT_DOWNLOAD_PATH = CONDUIT_REPO + "systems/conduit/Conduit/" + CONDUIT_VERSION +  "/Conduit-" + CONDUIT_VERSION + ".jar";
+    }
+
+    public enum Side {
+        CLIENT,
+        SERVER
     }
 }
