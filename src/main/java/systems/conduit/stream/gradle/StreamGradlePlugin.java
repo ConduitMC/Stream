@@ -28,10 +28,10 @@ public class StreamGradlePlugin implements Plugin<Project> {
         setDefaults(project);
         // Run on evaluated
         project.getGradle().projectsEvaluated(action -> {
-            // Create default cache folder
-            Path cacheFolder = project.getGradle().getGradleUserHomeDir().toPath().resolve(Constants.CONDUIT_CACHE);
-            if (!cacheFolder.toFile().exists() && !cacheFolder.toFile().mkdirs()) {
-                System.out.println("Failed to make cache directory");
+            // Create build cache folder
+            Path buildCacheFolder = project.getBuildDir().toPath().resolve(Constants.STREAM_CACHE);
+            if (!buildCacheFolder.toFile().exists() && !buildCacheFolder.toFile().mkdirs()) {
+                System.out.println("Failed to make build stream directory");
                 System.exit(0);
             }
             // Get java convention and register java version if wanted
@@ -59,13 +59,13 @@ public class StreamGradlePlugin implements Plugin<Project> {
                 }
             };
             // Download required libraries
-            SharedLaunch.downloadRequiredLibraries(cacheFolder, registerDependency);
+            SharedLaunch.downloadRequiredLibraries(buildCacheFolder, registerDependency);
             // Download default libraries
-            SharedLaunch.downloadDefaultLibraries(cacheFolder, registerDependency);
+            SharedLaunch.downloadDefaultLibraries(buildCacheFolder, registerDependency);
             // Make sure minecraft is present. It always should be if done right.
             if (extension.minecraft != null) {
                 // Download/load minecraft libraries and download and remap minecraft if need to
-                SharedLaunch.setupMinecraft(side, cacheFolder, extension.minecraft, registerDependency);
+                SharedLaunch.setupMinecraft(side, buildCacheFolder, extension.minecraft, registerDependency);
                 // Load minecraft
                 registerDependency.callback(Constants.MAPPED_JAR_PATH.toFile());
             }

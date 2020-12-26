@@ -20,7 +20,7 @@ public class Constants {
     public static final String STREAM_JSON = "stream.json";
     public static final Path STREAM_JSON_PATH = Paths.get(STREAM_JSON);
 
-    public static final Path CONDUIT_CACHE = Paths.get("caches", "conduit");
+    public static final Path STREAM_CACHE = Paths.get("cache");
     public static Path MINECRAFT_PATH = Paths.get(".minecraft");
 
     // TODO: Detect side and use .libs for server
