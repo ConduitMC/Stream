@@ -1,6 +1,7 @@
 {
   "minecraft": {
-    "version": "20w49a"
+    "version": "20w49a",
+    "versionOverride": null
   },
   "conduit": {
     "version": "0.0.6",
