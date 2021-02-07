@@ -8,14 +8,12 @@ import systems.conduit.stream.json.JsonStream;
 import systems.conduit.stream.json.download.JsonLibraries;
 
 import java.io.*;
+import java.lang.reflect.Field;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.List;
+import java.util.*;
 import java.util.jar.JarFile;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
@@ -58,7 +56,8 @@ public class LauncherStart {
                 System.exit(0);
             }
         }
-        // Download/load minecraft libraries and download and remap minecraft if need to
+
+        // Download / load minecraft libraries and download and remap minecraft if need to
         Logger.info("Setting up Minecraft");
         if (!Constants.DEBUG) {
             if (stream != null) {
@@ -123,9 +122,11 @@ public class LauncherStart {
                         }
                         // Find all mixins for a jar.
                         List<String> mixinsJson = findMixinEntry(jarFile);
-                        if (!mixinsJson.isEmpty()) {
-                            MIXINS.addAll(mixinsJson);
-                        }
+                        if (!mixinsJson.isEmpty()) MIXINS.addAll(mixinsJson);
+                        // Load the version mixins for a jar.
+                        List<String> mixinsVersionJson = new ArrayList<>();
+                        mixinsJson.forEach(json -> mixinsVersionJson.add(json.replace(".json", "." + Constants.MINECRAFT_VERSION + ".json")));
+                        if (!mixinsVersionJson.isEmpty()) MIXINS.addAll(mixinsVersionJson);
                         // Add to class loader
                         PATHS.add(file.toPath());
                     } catch (IOException e) {
@@ -147,7 +148,7 @@ public class LauncherStart {
             final ZipEntry ze = e.nextElement();
             if (!ze.isDirectory()) {
                 final String name = ze.getName();
-                if (name.startsWith("mixins.") && name.endsWith(".json")) {
+                if (name.startsWith("mixins.") && name.endsWith(".json") && !name.matches(".*\\d.*")) {
                     mixins.add(name);
                 }
             }
