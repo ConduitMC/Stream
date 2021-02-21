@@ -11,7 +11,9 @@ import systems.conduit.stream.launcher.LauncherStart;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 
 public class ServerLaunchHandlerService implements ILaunchHandlerService {
 
@@ -38,8 +40,9 @@ public class ServerLaunchHandlerService implements ILaunchHandlerService {
 
     @Override
     public Callable<Void> launchService(String[] args, ITransformingClassLoader launchClassLoader) {
+        List<String> ourMixins = LauncherStart.MIXINS.stream().distinct().collect(Collectors.toList());
         // Add mixins to configure
-        LauncherStart.MIXINS.forEach(Mixins::addConfiguration);
+        ourMixins.forEach(Mixins::addConfiguration);
         return () -> {
             final Class<?> mcClass = Class.forName(Constants.MAIN_SERVER_FILE, true, launchClassLoader.getInstance());
             final Method mcClassMethod = mcClass.getMethod("main", String[].class);

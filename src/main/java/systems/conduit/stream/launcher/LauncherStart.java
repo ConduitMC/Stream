@@ -8,7 +8,6 @@ import systems.conduit.stream.json.JsonStream;
 import systems.conduit.stream.json.download.JsonLibraries;
 
 import java.io.*;
-import java.lang.reflect.Field;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -123,11 +122,8 @@ public class LauncherStart {
                         }
                         // Find all mixins for a jar.
                         List<String> mixinsJson = findMixinEntry(jarFile);
+                        mixinsJson = mixinsJson.stream().distinct().collect(Collectors.toList());
                         if (!mixinsJson.isEmpty()) MIXINS.addAll(mixinsJson);
-                        // Load the version mixins for a jar.
-                        List<String> mixinsVersionJson = new ArrayList<>();
-                        mixinsJson.stream().filter(json -> json.split("\\.").length < 3).forEach(json -> mixinsVersionJson.add(json.replace(".json", "." + Constants.MINECRAFT_VERSION + ".json")));
-                        if (!mixinsVersionJson.isEmpty()) MIXINS.addAll(mixinsVersionJson);
                         // Add to class loader
                         PATHS.add(file.toPath());
                     } catch (IOException e) {
@@ -149,7 +145,7 @@ public class LauncherStart {
             final ZipEntry ze = e.nextElement();
             if (!ze.isDirectory()) {
                 final String name = ze.getName();
-                if (name.startsWith("mixins.") && name.endsWith(".json") && !name.matches(".*\\d.*")) {
+                if (name.startsWith("mixins.") && name.endsWith(".json") && name.contains(Constants.MINECRAFT_VERSION.replace(".", ""))) {
                     mixins.add(name);
                 } else if (name.equals("mixin_dependencies.json")) {
                     // If we have found a dependency file, load and see if this version of the game has any mixin dependencies.
@@ -158,9 +154,10 @@ public class LauncherStart {
                         try (Reader reader = new InputStreamReader(file.getInputStream(mixinDependencies))) {
                             Gson gson = new GsonBuilder().create();
                             Map<String, List<String>> mixinDependenciesMap = gson.fromJson(reader, Map.class);
-                            if (!mixinDependenciesMap.containsKey(Constants.MINECRAFT_VERSION)) continue;
-                            List<String> requiredMixins = mixinDependenciesMap.getOrDefault(Constants.MINECRAFT_VERSION, new ArrayList<>())
-                                    .stream().map(mixinName -> "mixins.conduit." + mixinName.replace("\\.", "") + ".json").collect(Collectors.toList());
+                            List<String> requiredMixins = mixinDependenciesMap.getOrDefault(Constants.MINECRAFT_VERSION,
+                                    mixinDependenciesMap.getOrDefault(String.join(".", Arrays.stream(Constants.MINECRAFT_VERSION
+                                            .split("\\.")).skip(1).collect(Collectors.toList()).toArray(new String[] {})), new ArrayList<>()));
+                            requiredMixins = requiredMixins.stream().map(mixinName -> "mixins.conduit." + mixinName.replaceAll("\\.", "") + ".json").distinct().collect(Collectors.toList());
                             mixins.addAll(requiredMixins);
                         } catch (IOException ioException) {
                             ioException.printStackTrace();
