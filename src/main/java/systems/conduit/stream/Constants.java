@@ -40,9 +40,9 @@ public class Constants {
 
     public static final String CONDUIT_REPO = "https://repo.conduit.systems/repository/releases/";
     public static final String MINECRAFT_REPO = "https://libraries.minecraft.net/";
-    public static final String DEFAULT_REPO = "https://jcenter.bintray.com/";
+    public static final String DEFAULT_REPO = "https://repo.maven.apache.org/maven2/";
 
-    public static final String LOMBOK_DEPENDENCY = "org.projectlombok:lombok:1.18.10";
+    public static final String LOMBOK_DEPENDENCY = "org.projectlombok:lombok:1.18.20";
     public static final String CONDUIT_DEPENDENCY = "systems.conduit:Conduit:";
     public static final String STREAM_DEPENDENCY = "systems.conduit:Stream:";
     public static final String GRADLE_CONFIGURATION_ANNOTATION = "annotationProcessor";

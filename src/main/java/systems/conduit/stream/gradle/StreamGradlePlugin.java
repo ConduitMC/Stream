@@ -83,7 +83,7 @@ public class StreamGradlePlugin implements Plugin<Project> {
         project.apply(Collections.singletonMap("plugin", "maven-publish"));
         // Default repositories
         project.getRepositories().mavenLocal();
-        project.getRepositories().jcenter();
+        project.getRepositories().mavenCentral();
         project.getRepositories().maven(repo -> repo.setUrl(Constants.CONDUIT_REPO));
         project.getRepositories().maven(repo -> repo.setUrl(Constants.MINECRAFT_REPO));
         // Default dependencies
