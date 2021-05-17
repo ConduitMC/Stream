@@ -4,31 +4,31 @@
       "type": "maven",
       "groupId": "org.ow2.asm",
       "artifactId": "asm",
-      "version": "7.3.1"
+      "version": "9.1"
     },
     {
       "type": "maven",
       "groupId": "org.ow2.asm",
       "artifactId": "asm-analysis",
-      "version": "7.3.1"
+      "version": "9.1"
     },
     {
       "type": "maven",
       "groupId": "org.ow2.asm",
       "artifactId": "asm-commons",
-      "version": "7.3.1"
+      "version": "9.1"
     },
     {
       "type": "maven",
       "groupId": "org.ow2.asm",
       "artifactId": "asm-tree",
-      "version": "7.3.1"
+      "version": "9.1"
     },
     {
       "type": "maven",
       "groupId": "org.ow2.asm",
       "artifactId": "asm-util",
-      "version": "7.3.1"
+      "version": "9.1"
     },
     {
       "type": "maven",
@@ -52,7 +52,7 @@
       "type": "maven",
       "groupId": "net.md-5",
       "artifactId": "SpecialSource",
-      "version": "1.8.6",
+      "version": "1.9.0",
       "url": "https://repo.conduit.systems/repository/releases/"
     },
     {
