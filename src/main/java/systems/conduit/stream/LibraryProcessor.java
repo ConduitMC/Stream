@@ -37,8 +37,13 @@ public class LibraryProcessor {
                 } else {
                     libraryPath = new File(Constants.LIBRARIES_PATH.toFile() + File.separator + getPath(library));
                 }
+                // Try to create directory.
                 try {
                     Files.createDirectories(libraryPath.toPath());
+                } catch (Exception e) {
+                    Logger.exception("Error creating directories for " + type + ": " + library.getArtifactId(), e);
+                }
+                try {
                     File jar = new File(libraryPath, getFileName(library));
                     if (!jar.exists() && library.getType() != null) {
                         Logger.info("Downloading " + type + ": " + library.getArtifactId());
@@ -51,8 +56,7 @@ public class LibraryProcessor {
                     loadedLibrariesIds.add(library.getArtifactId());
                     loadedLibrariesFiles.add(jar);
                 } catch (Exception e) {
-                    Logger.exception("Error loading " + type + ": " + library.getArtifactId(), e);
-                    System.exit(0);
+                    Logger.exception("Error loading url for " + type + ": " + library.getArtifactId(), e);
                 } finally {
                     latch.countDown();
                 }
