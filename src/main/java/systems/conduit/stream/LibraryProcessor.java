@@ -25,11 +25,11 @@ public class LibraryProcessor {
         List<File> loadedLibrariesFiles = new ArrayList<>();
         CountDownLatch latch = new CountDownLatch(libraries.size());
         for (JsonLibraryInfo library : libraries) {
-            if (loadedArtifacts.contains(library.getGroupId() + ":" + library.getArtifactId())) {
+            if (loadedArtifacts.contains(library.getGroupId() + ":" + library.getArtifactId() + (library.getEnd() != null && !library.getEnd().isEmpty() ? "-" + library.getEnd() : ""))) {
                 latch.countDown();
                 continue;
             }
-            loadedArtifacts.add(library.getGroupId() + ":" + library.getArtifactId());
+            loadedArtifacts.add(library.getGroupId() + ":" + library.getArtifactId() + (library.getEnd() != null && !library.getEnd().isEmpty() ? "-" + library.getEnd() : ""));
             new Thread(() -> {
                 File libraryPath;
                 if (basePath != null) {
@@ -41,19 +41,19 @@ public class LibraryProcessor {
                 try {
                     Files.createDirectories(libraryPath.toPath());
                 } catch (Exception e) {
-                    Logger.exception("Error creating directories for " + type + ": " + library.getArtifactId(), e);
+                    Logger.exception("Error creating directories for " + type + ": " + library.getArtifactId() + (library.getEnd() != null && !library.getEnd().isEmpty() ? "-" + library.getEnd() : ""), e);
                 }
                 try {
                     File jar = new File(libraryPath, getFileName(library));
                     if (!jar.exists() && library.getType() != null) {
-                        Logger.info("Downloading " + type + ": " + library.getArtifactId());
+                        Logger.info("Downloading " + type + ": " + library.getArtifactId() + (library.getEnd() != null && !library.getEnd().isEmpty() ? "-" + library.getEnd() : ""));
                         if (library.getType().trim().equalsIgnoreCase("maven")) {
                             SharedLaunch.downloadFile(getUrl(library), jar);
                         } else if (!library.getType().trim().equalsIgnoreCase("minecraft")) {
                             SharedLaunch.downloadFile(new URL(library.getUrl()), jar);
                         }
                     }
-                    loadedLibrariesIds.add(library.getArtifactId());
+                    loadedLibrariesIds.add(library.getArtifactId() + (library.getEnd() != null && !library.getEnd().isEmpty() ? "-" + library.getEnd() : ""));
                     loadedLibrariesFiles.add(jar);
                 } catch (Exception e) {
                     Logger.exception("Error loading url for " + type + ": " + library.getArtifactId(), e);
@@ -81,7 +81,7 @@ public class LibraryProcessor {
     }
 
     private static String getFileName(JsonLibraryInfo library) {
-        return library.getArtifactId() + "-" + library.getVersion() + ".jar";
+        return library.getArtifactId() + "-" + library.getVersion() + (library.getEnd() != null && !library.getEnd().isEmpty() ? "-" + library.getEnd() : "") + ".jar";
     }
 
     private static String getPath(JsonLibraryInfo library) {
