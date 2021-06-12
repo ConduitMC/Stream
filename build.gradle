@@ -10,7 +10,7 @@ plugins {
 
 repositories {
     mavenLocal()
-    jcenter()
+    mavenCentral()
     maven {
         url "https://files.minecraftforge.net/maven/"
     }
