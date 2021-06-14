@@ -136,6 +136,8 @@ public class LauncherStart {
                 }
             }
         }
+        // Crack modules
+        Agent.crackModules();
         // Start modlauncher
         Logger.info("Starting modlauncher...");
         Launcher.main(Stream.concat(Stream.of("--launchTarget", "minecraft-" + side.name().toLowerCase()), Arrays.stream(args)).toArray(String[]::new));

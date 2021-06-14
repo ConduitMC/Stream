@@ -59,23 +59,15 @@
       "type": "maven",
       "groupId": "cpw.mods",
       "artifactId": "grossjava9hacks",
-      "version": "2.0.7",
-      "url": "https://maven.minecraftforge.net/"
+      "version": "2.0.9",
+      "url": "https://repo.conduit.systems/repository/releases/"
     },
     {
       "type": "maven",
       "groupId": "cpw.mods",
       "artifactId": "modlauncher",
-      "version": "9.0.0",
+      "version": "8.0.6",
       "url": "https://maven.minecraftforge.net/"
-    },
-    {
-      "type": "maven",
-      "groupId": "cpw.mods",
-      "artifactId": "modlauncher",
-      "version": "9.0.0",
-      "url": "https://maven.minecraftforge.net/",
-      "end": "api"
     },
     {
       "type": "maven",

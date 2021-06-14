@@ -23,50 +23,38 @@ public class LibraryProcessor {
         Logger.info("Loading " + type);
         List<String> loadedLibrariesIds = new ArrayList<>();
         List<File> loadedLibrariesFiles = new ArrayList<>();
-        CountDownLatch latch = new CountDownLatch(libraries.size());
         for (JsonLibraryInfo library : libraries) {
             if (loadedArtifacts.contains(library.getGroupId() + ":" + library.getArtifactId() + (library.getEnd() != null && !library.getEnd().isEmpty() ? "-" + library.getEnd() : ""))) {
-                latch.countDown();
                 continue;
             }
             loadedArtifacts.add(library.getGroupId() + ":" + library.getArtifactId() + (library.getEnd() != null && !library.getEnd().isEmpty() ? "-" + library.getEnd() : ""));
-            new Thread(() -> {
-                File libraryPath;
-                if (basePath != null) {
-                    libraryPath = new File(basePath.toFile() + File.separator + Constants.LIBRARIES_PATH.toFile() + File.separator + getPath(library));
-                } else {
-                    libraryPath = new File(Constants.LIBRARIES_PATH.toFile() + File.separator + getPath(library));
-                }
-                // Try to create directory.
-                try {
-                    Files.createDirectories(libraryPath.toPath());
-                } catch (Exception e) {
-                    Logger.exception("Error creating directories for " + type + ": " + library.getArtifactId() + (library.getEnd() != null && !library.getEnd().isEmpty() ? "-" + library.getEnd() : ""), e);
-                }
-                try {
-                    File jar = new File(libraryPath, getFileName(library));
-                    if (!jar.exists() && library.getType() != null) {
-                        Logger.info("Downloading " + type + ": " + library.getArtifactId() + (library.getEnd() != null && !library.getEnd().isEmpty() ? "-" + library.getEnd() : ""));
-                        if (library.getType().trim().equalsIgnoreCase("maven")) {
-                            SharedLaunch.downloadFile(getUrl(library), jar);
-                        } else if (!library.getType().trim().equalsIgnoreCase("minecraft")) {
-                            SharedLaunch.downloadFile(new URL(library.getUrl()), jar);
-                        }
+            File libraryPath;
+            if (basePath != null) {
+                libraryPath = new File(basePath.toFile() + File.separator + Constants.LIBRARIES_PATH.toFile() + File.separator + getPath(library));
+            } else {
+                libraryPath = new File(Constants.LIBRARIES_PATH.toFile() + File.separator + getPath(library));
+            }
+            // Try to create directory.
+            try {
+                Files.createDirectories(libraryPath.toPath());
+            } catch (Exception e) {
+                Logger.exception("Error creating directories for " + type + ": " + library.getArtifactId() + (library.getEnd() != null && !library.getEnd().isEmpty() ? "-" + library.getEnd() : ""), e);
+            }
+            try {
+                File jar = new File(libraryPath, getFileName(library));
+                if (!jar.exists() && library.getType() != null) {
+                    Logger.info("Downloading " + type + ": " + library.getArtifactId() + (library.getEnd() != null && !library.getEnd().isEmpty() ? "-" + library.getEnd() : ""));
+                    if (library.getType().trim().equalsIgnoreCase("maven")) {
+                        SharedLaunch.downloadFile(getUrl(library), jar);
+                    } else if (!library.getType().trim().equalsIgnoreCase("minecraft")) {
+                        SharedLaunch.downloadFile(new URL(library.getUrl()), jar);
                     }
-                    loadedLibrariesIds.add(library.getArtifactId() + (library.getEnd() != null && !library.getEnd().isEmpty() ? "-" + library.getEnd() : ""));
-                    loadedLibrariesFiles.add(jar);
-                } catch (Exception e) {
-                    Logger.exception("Error loading url for " + type + ": " + library.getArtifactId(), e);
-                } finally {
-                    latch.countDown();
                 }
-            }).start();
-        }
-        try {
-            latch.await();
-        } catch (InterruptedException e) {
-            Logger.fatal("Error loading libraries");
-            System.exit(0);
+                loadedLibrariesIds.add(library.getArtifactId() + (library.getEnd() != null && !library.getEnd().isEmpty() ? "-" + library.getEnd() : ""));
+                loadedLibrariesFiles.add(jar);
+            } catch (Exception e) {
+                Logger.exception("Error loading url for " + type + ": " + library.getArtifactId(), e);
+            }
         }
         if (!loadedLibrariesIds.isEmpty()) {
             loadedLibrariesFiles.forEach(callback::callback);

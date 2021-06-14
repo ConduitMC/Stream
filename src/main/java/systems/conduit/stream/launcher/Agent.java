@@ -5,7 +5,10 @@ import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Map;
+import java.util.Set;
 import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 
 public class Agent {
 
@@ -33,5 +36,17 @@ public class Agent {
             e.printStackTrace();
             //System.exit(0);
         }
+    }
+
+    protected static void crackModules() {
+        final Set<Module> systemUnnamed = Set.of(ClassLoader.getSystemClassLoader().getUnnamedModule());
+        Agent.inst.redefineModule(
+                Manifest.class.getModule(),
+                Set.of(),
+                Map.of("sun.security.util", systemUnnamed),
+                Map.of("java.util.jar", systemUnnamed, "java.lang", systemUnnamed),
+                Set.of(),
+                Map.of()
+        );
     }
 }
