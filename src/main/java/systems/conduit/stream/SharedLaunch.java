@@ -8,6 +8,7 @@ import systems.conduit.stream.json.minecraft.MinecraftLibrary;
 import systems.conduit.stream.json.minecraft.MinecraftVersion;
 import systems.conduit.stream.json.minecraft.manifest.MinecraftVersionManifest;
 import systems.conduit.stream.json.minecraft.manifest.MinecraftVersionManifestType;
+import systems.conduit.stream.launcher.LauncherStart;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
@@ -31,12 +32,12 @@ public class SharedLaunch {
         LibraryProcessor.resetArtifacts();
         // Load logger libraries
         LibraryProcessor.downloadLibrary("logger libraries", basePath, Arrays.asList(
-                new JsonLibraryInfo("maven", "org.apache.logging.log4j", "log4j-api", "2.11.2", ""),
-                new JsonLibraryInfo("maven", "org.apache.logging.log4j", "log4j-core", "2.11.2", "")
+                new JsonLibraryInfo("maven", "org.apache.logging.log4j", "log4j-api", "2.11.2", "", ""),
+                new JsonLibraryInfo("maven", "org.apache.logging.log4j", "log4j-core", "2.11.2", "", "")
         ), callback);
         // Load json library
         LibraryProcessor.downloadLibrary("json library", basePath, Collections.singletonList(
-                new JsonLibraryInfo("maven", "com.google.code.gson", "gson", "2.8.0", "")
+                new JsonLibraryInfo("maven", "com.google.code.gson", "gson", "2.8.0", "", "")
         ), callback);
     }
 
@@ -108,7 +109,7 @@ public class SharedLaunch {
             // Should not need mac only. I think?
             if (!minecraftLibrary.isMac()) {
                 String[] minecraftLib = minecraftLibrary.getName().split(":");
-                minecraftLibraries.add(new JsonLibraryInfo("maven", minecraftLib[0], minecraftLib[1], minecraftLib[2], Constants.MINECRAFT_REPO));
+                minecraftLibraries.add(new JsonLibraryInfo("maven", minecraftLib[0], minecraftLib[1], minecraftLib[2], Constants.MINECRAFT_REPO, ""));
             }
         }
         // Download all the Minecraft libraries

@@ -12,4 +12,6 @@ public class JsonLibraryInfo {
     private final String artifactId;
     private final String version;
     private final String url;
+    private final String end;
+
 }

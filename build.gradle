@@ -12,7 +12,7 @@ repositories {
     mavenLocal()
     mavenCentral()
     maven {
-        url "https://files.minecraftforge.net/maven/"
+        url "https://maven.minecraftforge.net/"
     }
     maven {
         url "https://repo.conduit.systems/repository/releases/"
@@ -20,29 +20,27 @@ repositories {
 }
 
 dependencies {
-    implementation "org.projectlombok:lombok:1.18.16"
-    annotationProcessor "org.projectlombok:lombok:1.18.16"
+    implementation "org.projectlombok:lombok:1.18.20"
+    annotationProcessor "org.projectlombok:lombok:1.18.20"
     implementation "com.google.code.gson:gson:2.8.6"
     implementation "org.apache.logging.log4j:log4j-api:2.14.0"
     implementation "org.apache.logging.log4j:log4j-core:2.14.0"
-    compileOnly "net.md-5:SpecialSource:1.8.6"
-    compileOnly "cpw.mods:modlauncher:8.0.6"
+    compileOnly "net.md-5:SpecialSource:1.10.0"
+    compileOnly "cpw.mods:modlauncher:9.0.0"
     compileOnly "org.spongepowered:mixin:0.8.2"
 }
 
 group = theGroup
 version = theVersion
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-}
-
 checkstyle {
     configFile = file("$rootDir/checkstyle.xml")
 }
 
-task install(dependsOn: [publishToMavenLocal])
+java {
+    sourceCompatibility = JavaVersion.VERSION_16
+    targetCompatibility = JavaVersion.VERSION_16
+}
 
 task processSource(type: Sync) {
     from sourceSets.main.java
@@ -73,17 +71,6 @@ gradlePlugin {
     }
 }
 
-task copyResources {
-    copy {
-        from "build/resources/main"
-        into "build/classes/java/main"
-    }
-}
-
-compileJava.doLast {
-    tasks.copyResources
-}
-
 publishing {
     publications {
         mavenJava(MavenPublication) {
@@ -100,3 +87,5 @@ publishing {
         }
     }
 }
+
+task install(dependsOn: [publishToMavenLocal])
