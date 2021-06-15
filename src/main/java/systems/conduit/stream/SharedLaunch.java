@@ -132,7 +132,7 @@ public class SharedLaunch {
             }
             // Cleanup Minecraft
             Logger.info("Cleaning up Minecraft");
-            //deleteMinecraftTrash(Constants.JAR_PATH.toFile());
+            deleteMinecraftTrash(Constants.JAR_PATH.toFile());
             Logger.info("Cleaned up Minecraft");
             // Download mappings
             String mappingsDownload = side == Constants.Side.SERVER ? minecraftVersion.getDownloads().getServerMappings().getUrl() : minecraftVersion.getDownloads().getClientMappings().getUrl();
@@ -186,7 +186,10 @@ public class SharedLaunch {
         try (FileSystem zipFS = FileSystems.newFileSystem(URI.create("jar:" + file.toURI().toString()), zipProperties)) {
             Path[] allTheTrash = new Path[] {
                     zipFS.getPath("com"), zipFS.getPath("io"), zipFS.getPath("it"),
-                    zipFS.getPath("javax"), zipFS.getPath("joptsimple"), zipFS.getPath("org")
+                    zipFS.getPath("javax"), zipFS.getPath("joptsimple"), zipFS.getPath("org"),
+                    zipFS.getPath("oshi"), zipFS.getPath("oshi.architecture.properties"),
+                    zipFS.getPath("oshi.linux.filename.properties"), zipFS.getPath("oshi.macos.versions.properties"),
+                    zipFS.getPath("oshi.properties"), zipFS.getPath("oshi.vmmacaddr.properties")
             };
             for (Path trash : allTheTrash) {
                 delete(trash);
