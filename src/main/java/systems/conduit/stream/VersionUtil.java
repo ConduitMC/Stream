@@ -1,6 +1,6 @@
 package systems.conduit.stream;
 
-import jdk.internal.joptsimple.internal.Strings;
+import joptsimple.internal.Strings;
 
 import java.util.List;
 import java.util.Optional;
