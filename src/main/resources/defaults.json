@@ -73,7 +73,7 @@
       "type": "maven",
       "groupId": "org.spongepowered",
       "artifactId": "mixin",
-      "version": "0.8.2",
+      "version": "0.8.3",
       "url": "https://repo.spongepowered.org/maven/"
     }
   ]
